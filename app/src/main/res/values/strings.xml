@@ -1,3 +1,19 @@
 <resources>
     <string name="app_name">Live Light</string>
+    <string name="close">Close</string>
+    <!-- Login -->
+    <string name="login">Login</string>
+    <string name="sign_in">Sign In</string>
+    <string name="login_remember">Keep me logged in.</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <!-- Registration -->
+    <string name="first_name">Name</string>
+    <string name="surname">Surname</string>
+    <string name="verify_password">Confirm Password</string>
+    <string name="registration_permissions">I authorize the treatment of my data.</string>
+    <!-- Main -->
+    <string name="title_activity_main">MainActivity</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
 </resources>

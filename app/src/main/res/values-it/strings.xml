@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Live Light</string>
+    <string name="close">Chiudi</string>
+    <!-- Login -->
+    <string name="login">Accedi</string>
+    <string name="sign_in">Registrati</string>
+    <string name="login_remember">Mantieni l\'accesso.</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <!-- Registration -->
+    <string name="first_name">Nome</string>
+    <string name="surname">Cognome</string>
+    <string name="verify_password">Conferma Password</string>
+    <string name="registration_permissions">Autorizzo al trattamento dei miei dati.</string>
+    <!-- Main -->
+    <string name="title_activity_main">MainActivity</string>
+    <string name="tab_text_1">Tab 1</string>
+    <string name="tab_text_2">Tab 2</string>
+</resources>
