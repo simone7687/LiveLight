@@ -1,13 +1,15 @@
 <resources>
     <string name="app_name">Live Light</string>
+    <string name="join_description">Let\'s join us and\nShare items you don\'t use</string>
     <string name="close">Close</string>
     <!-- Login -->
     <string name="login">Login</string>
-    <string name="sign_in">Sign In</string>
+    <string name="not_registered">Not registered yet?</string>
     <string name="login_remember">Keep me logged in.</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
     <!-- Registration -->
+    <string name="registration">Sign in</string>
     <string name="first_name">Name</string>
     <string name="surname">Surname</string>
     <string name="verify_password">Confirm Password</string>
