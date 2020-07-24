@@ -16,6 +16,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
         // Back button
         val actionBar = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
+        actionBar?.title = getString(R.string.registration)
     }
 
     override fun onClick(v: View) {
@@ -29,8 +30,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     /**
      * Back button action
      */
-    override fun onSupportNavigateUp(): Boolean
-    {
+    override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true
     }

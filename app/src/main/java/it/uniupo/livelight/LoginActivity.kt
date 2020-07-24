@@ -14,6 +14,10 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
         button_login.setOnClickListener(this)
         button_registration.setOnClickListener(this)
+
+        //Set activity title and disable back button
+        val actionBar = supportActionBar
+        actionBar?.title = getString(R.string.login)
     }
 
     override fun onClick(v: View) {
