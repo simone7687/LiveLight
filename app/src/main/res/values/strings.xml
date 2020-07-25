@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Live Light</string>
+    <string name="app_name" translatable="false">Live Light</string>
     <string name="join_description">Let\'s join us\nShare items you don\'t use</string>
     <string name="close">Close</string>
     <!-- Login -->
