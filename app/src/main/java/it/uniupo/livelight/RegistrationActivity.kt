@@ -1,9 +1,9 @@
 package it.uniupo.livelight
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
 import android.view.View
-import kotlinx.android.synthetic.main.activity_login.*
+import androidx.appcompat.app.AppCompatActivity
+import kotlinx.android.synthetic.main.activity_registration.*
 
 class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
 
