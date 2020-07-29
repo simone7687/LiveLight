@@ -1,9 +1,20 @@
 package it.uniupo.livelight
 
+import android.content.Intent
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextUtils
+import android.text.TextWatcher
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.android.synthetic.main.activity_login.*
 import kotlinx.android.synthetic.main.activity_registration.*
+import kotlinx.android.synthetic.main.activity_registration.button_registration
+import kotlinx.android.synthetic.main.activity_registration.editText_email
+import kotlinx.android.synthetic.main.activity_registration.editText_password
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
 
@@ -22,7 +33,58 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View) {
         when (v.id) {
             R.id.button_registration -> {
-                // TODO: Regitration check
+                // check for empty fields
+                if (!checkEmptyFields()) {
+                    Toast.makeText(
+                        baseContext, R.string.empty_input_field,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return
+                }
+                // check if it's a valid email
+                if (!TextUtils.isEmpty(editText_email.toString()) && android.util.Patterns.EMAIL_ADDRESS.matcher(editText_email.toString()).matches()) {
+                    // TODO: check if the email has already been used
+                }
+                else {
+                    Toast.makeText(
+                        baseContext, R.string.invalid_email,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return
+                }
+                // check if the password exceeds 6 characters
+                if (!(editText_password.text.toString().length < 6)) {
+                    Toast.makeText(
+                        baseContext, R.string.short_password,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return
+                }
+                // check if it is a robust password
+                if (!checkPasswordCharacters(editText_password.toString())) {
+                    Toast.makeText(
+                        baseContext, R.string.weak_password,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return
+                }
+                // check if the password is the same as the verification password
+                if (editText_password.toString() != editText_verifyPassword.toString()) {
+                    Toast.makeText(
+                        baseContext, R.string.different_passwords,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return
+                }
+                // check whether the data processing has been authorized
+                if (!checkBox_authorizesData.isActivated) {
+                    Toast.makeText(
+                        baseContext, R.string.unauthorized_data_processing,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return
+                }
+                // TODO: registration
             }
         }
     }
@@ -33,5 +95,46 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true
+    }
+
+    /**
+     * Check for empty mandatory fields
+     *
+     * Returns false if it finds an empty field
+     */
+    fun checkEmptyFields(): Boolean {
+        if(editText_name.text.isNullOrEmpty())
+            return false
+        if(editText_surname.text.isNullOrEmpty())
+            return false
+        if(editText_email.text.isNullOrEmpty())
+            return false
+        if(editText_city.text.isNullOrEmpty())
+            return false
+        if(editText_address.text.isNullOrEmpty())
+            return false
+        if(editText_password.text.isNullOrEmpty())
+            return false
+        if(editText_verifyPassword.text.isNullOrEmpty())
+            return false
+        return true
+    }
+
+    /**
+     * Check if the password has the required characters, return true if it has them.
+     *
+     * Characters required:
+     * - lowercase letter [a-z]
+     * - uppercase letter [A-Z]
+     * - number [0-9]
+     * - special character [@#$%^&+=]
+     */
+    private fun checkPasswordCharacters(password: String?): Boolean {
+        val pattern: Pattern
+        val matcher: Matcher
+        val charactersRequired = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@#$%^&+=])(?=\\S+$).{4,}$"
+        pattern = Pattern.compile(charactersRequired)
+        matcher = pattern.matcher(password)
+        return matcher.matches()
     }
 }

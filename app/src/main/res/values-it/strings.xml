@@ -2,6 +2,13 @@
 <resources>
     <string name="join_description">Unisciti a noi\nCondividi gli oggetti che non utilizzi</string>
     <string name="close">Chiudi</string>
+    <!-- Warning -->
+    <string name="empty_input_field">Hai dimenticato alcuni campi</string>
+    <string name="invalid_email">Devi inserire un indirizzo email valido</string>
+    <string name="different_passwords">Hai inserito password diverse</string>
+    <string name="short_password">Devi inserire una password di almeno 6 caratteri</string>
+    <string name="weak_password">La password è troppo debole</string>
+    <string name="unauthorized_data_processing">Devi accettare il trattamento deti per continuare</string>
     <!-- Login -->
     <string name="login">Accedi</string>
     <string name="not_registered">Non sei ancora registrato?</string>
@@ -13,7 +20,7 @@
     <string name="first_name">Nome</string>
     <string name="surname">Cognome</string>
     <string name="verify_password">Conferma Password</string>
-    <string name="registration_permissions">Autorizzo al trattamento dei miei dati.</string>
+    <string name="authorizes_data">Autorizzo al trattamento dei miei dati.</string>
     <!-- Main -->
     <string name="title_activity_main">MainActivity</string>
     <string name="tab_text_1">Tab 1</string>
