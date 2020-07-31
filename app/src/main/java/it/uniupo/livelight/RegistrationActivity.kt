@@ -1,22 +1,20 @@
 package it.uniupo.livelight
 
-import android.content.Intent
 import android.os.Bundle
-import android.text.Editable
 import android.text.TextUtils
-import android.text.TextWatcher
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_login.*
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_registration.*
-import kotlinx.android.synthetic.main.activity_registration.button_registration
-import kotlinx.android.synthetic.main.activity_registration.editText_email
-import kotlinx.android.synthetic.main.activity_registration.editText_password
 import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
+
+    private lateinit var auth: FirebaseAuth
+    private val db = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,17 +35,6 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                 if (!checkEmptyFields()) {
                     Toast.makeText(
                         baseContext, R.string.empty_input_field,
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    return
-                }
-                // check if it's a valid email
-                if (!TextUtils.isEmpty(editText_email.toString()) && android.util.Patterns.EMAIL_ADDRESS.matcher(editText_email.toString()).matches()) {
-                    // TODO: check if the email has already been used
-                }
-                else {
-                    Toast.makeText(
-                        baseContext, R.string.invalid_email,
                         Toast.LENGTH_SHORT
                     ).show()
                     return
@@ -84,6 +71,21 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                     ).show()
                     return
                 }
+
+                // check if it's a valid email and check if the email has already been used
+                if (!TextUtils.isEmpty(editText_email.toString()) && android.util.Patterns.EMAIL_ADDRESS.matcher(
+                        editText_email.toString()
+                    ).matches()
+                ) {
+                    // TODO: check if the email has already been used
+                } else {
+                    Toast.makeText(
+                        baseContext, R.string.invalid_email,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return
+                }
+
                 // TODO: registration
             }
         }
@@ -102,20 +104,20 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
      *
      * Returns false if it finds an empty field
      */
-    fun checkEmptyFields(): Boolean {
-        if(editText_name.text.isNullOrEmpty())
+    private fun checkEmptyFields(): Boolean {
+        if (editText_name.text.isNullOrEmpty())
             return false
-        if(editText_surname.text.isNullOrEmpty())
+        if (editText_surname.text.isNullOrEmpty())
             return false
-        if(editText_email.text.isNullOrEmpty())
+        if (editText_email.text.isNullOrEmpty())
             return false
-        if(editText_city.text.isNullOrEmpty())
+        if (editText_city.text.isNullOrEmpty())
             return false
-        if(editText_address.text.isNullOrEmpty())
+        if (editText_address.text.isNullOrEmpty())
             return false
-        if(editText_password.text.isNullOrEmpty())
+        if (editText_password.text.isNullOrEmpty())
             return false
-        if(editText_verifyPassword.text.isNullOrEmpty())
+        if (editText_verifyPassword.text.isNullOrEmpty())
             return false
         return true
     }

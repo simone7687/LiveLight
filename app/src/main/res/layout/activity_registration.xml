@@ -10,6 +10,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:orientation="vertical">
+
         <TextView
             android:id="@+id/textView_title"
             android:layout_width="wrap_content"
@@ -58,8 +59,8 @@
             android:layout_height="50dp"
             android:autofillHints="20"
             android:layout_marginBottom="10dp"
-            android:hint="@string/verify_password"
-            android:inputType="textPassword"
+            android:hint="@string/city"
+            android:inputType="textAutoComplete"
             android:padding="15dp"
             android:textSize="15sp" />
 
@@ -68,9 +69,9 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_marginBottom="10dp"
-            android:hint="@string/verify_password"
+            android:hint="@string/address"
             android:autofillHints="20"
-            android:inputType="textPassword"
+            android:inputType="textAutoComplete"
             android:padding="15dp"
             android:textSize="15sp" />
 
@@ -117,6 +118,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1">
+
             <Button
                 android:id="@+id/button_registration"
                 android:layout_width="match_parent"

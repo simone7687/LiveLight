@@ -2,12 +2,12 @@ package it.uniupo.livelight
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.activity_login.*
-
 
 class LoginActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var auth: FirebaseAuth
@@ -15,6 +15,8 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+        auth = FirebaseAuth.getInstance()
 
         button_login.setOnClickListener(this)
         button_registration.setOnClickListener(this)
@@ -27,10 +29,29 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View) {
         when (v.id) {
             R.id.button_login -> {
-                // TODO: login check
-                // Navigate to MainActivity
-                val intentMain = Intent(this, MainActivity::class.java)
-                startActivity(intentMain)
+                // Verifies that credentials are valid
+                if (editText_email.text.toString()
+                        .isNullOrEmpty() || editText_password.text.toString().isNullOrEmpty()
+                ) {
+                    Toast.makeText(
+                        baseContext, getString(R.string.empty_input_field),
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return
+                }
+                // check if it's a valid email
+                if (TextUtils.isEmpty(editText_email.toString()) || !android.util.Patterns.EMAIL_ADDRESS.matcher(
+                        editText_email.toString()
+                    ).matches()
+                ) {
+                    Toast.makeText(
+                        baseContext, R.string.invalid_email,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return
+                }
+                // Try logging in
+                login(editText_email.text.toString(), editText_password.text.toString())
             }
             R.id.button_registration -> {
                 // Navigate to RegistrationActivity
@@ -38,5 +59,25 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                 startActivity(intentRegistration)
             }
         }
+    }
+
+    /**
+     * Try logging in:
+     * if the connection was successful, it switches to the Main activity,
+     * otherwise it gives an error signal.
+     */
+    private fun login(email: String, password: String) {
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnSuccessListener(this) {
+                // Navigate to MainActivity
+                val intentMain = Intent(this, MainActivity::class.java)
+                startActivity(intentMain)
+                finish()
+            }.addOnFailureListener { exception ->
+                Toast.makeText(
+                    baseContext, exception.localizedMessage,
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
     }
 }

@@ -2,6 +2,8 @@
 <resources>
     <string name="join_description">Unisciti a noi\nCondividi gli oggetti che non utilizzi</string>
     <string name="close">Chiudi</string>
+    <string name="city">Città</string>
+    <string name="address">Indirizzo</string>
     <!-- Warning -->
     <string name="empty_input_field">Hai dimenticato alcuni campi</string>
     <string name="invalid_email">Devi inserire un indirizzo email valido</string>
