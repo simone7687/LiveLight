@@ -8,7 +8,6 @@
     <string name="empty_input_field">You forgot some fields</string>
     <string name="invalid_email">You must enter a valid email</string>
     <string name="different_passwords">You entered different passwords</string>
-    <string name="short_password">You must enter a password of at least 6 characters</string>
     <string name="weak_password">Password is too weak</string>
     <string name="unauthorized_data_processing">You must accept your treatment to continue</string>
     <!-- Login -->

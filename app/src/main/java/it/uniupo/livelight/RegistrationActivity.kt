@@ -1,5 +1,6 @@
 package it.uniupo.livelight
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
 import android.view.View
@@ -35,14 +36,6 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                 if (!checkEmptyFields()) {
                     Toast.makeText(
                         baseContext, R.string.empty_input_field,
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    return
-                }
-                // check if the password exceeds 6 characters
-                if (!(editText_password.text.toString().length < 6)) {
-                    Toast.makeText(
-                        baseContext, R.string.short_password,
                         Toast.LENGTH_SHORT
                     ).show()
                     return
@@ -86,7 +79,15 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                     return
                 }
 
-                // TODO: registration
+                // create an account
+                createAccount(
+                    editText_email.toString(),
+                    editText_password.toString(),
+                    editText_name.toString(),
+                    editText_surname.toString(),
+                    editText_city.toString(),
+                    editText_address.toString()
+                )
             }
         }
     }
@@ -123,7 +124,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     /**
-     * Check if the password has the required characters, return true if it has them.
+     * Check if the password exceeds 6 characters and if the password has the required characters, return true if it has them.
      *
      * Characters required:
      * - lowercase letter [a-z]
@@ -132,11 +133,52 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
      * - special character [@#$%^&+=]
      */
     private fun checkPasswordCharacters(password: String?): Boolean {
+        if (editText_password.text.toString().length < 6)
+            return false
         val pattern: Pattern
         val matcher: Matcher
         val charactersRequired = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@#$%^&+=])(?=\\S+$).{4,}$"
         pattern = Pattern.compile(charactersRequired)
         matcher = pattern.matcher(password)
         return matcher.matches()
+    }
+
+    /**
+     * Try creating an account, if it fails by an error message.
+     */
+    private fun createAccount(
+        email: String,
+        password: String,
+        name: String,
+        surname: String,
+        city: String,
+        address: String
+    ) {
+        auth.createUserWithEmailAndPassword(
+            email,
+            password
+        )
+            .addOnSuccessListener(this) {
+                val data = hashMapOf(
+                    "Name" to name,
+                    "Surname" to surname,
+                    "City" to city,
+                    "Address" to address
+                )
+                db.collection("user_details").document(auth.currentUser?.uid.toString().toString())
+                    .set(data as Map<String, Any>)
+                    .addOnSuccessListener {
+                        val intentMain = Intent(this, MainActivity::class.java)
+                        startActivity(intentMain)
+                        finish()
+                    }.addOnFailureListener { exception ->
+                        Toast.makeText(this, exception.localizedMessage, Toast.LENGTH_SHORT).show()
+                    }
+            }.addOnFailureListener { exception ->
+                Toast.makeText(
+                    baseContext, exception.localizedMessage,
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
     }
 }
