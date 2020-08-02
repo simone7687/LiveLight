@@ -40,8 +40,8 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                     return
                 }
                 // check if it's a valid email
-                if (TextUtils.isEmpty(editText_email.toString()) || !android.util.Patterns.EMAIL_ADDRESS.matcher(
-                        editText_email.toString()
+                if (TextUtils.isEmpty(editText_email.text.toString()) || !android.util.Patterns.EMAIL_ADDRESS.matcher(
+                        editText_email.text.toString()
                     ).matches()
                 ) {
                     Toast.makeText(

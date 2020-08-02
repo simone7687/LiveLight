@@ -9,7 +9,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.activity_registration.*
-import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
@@ -41,7 +40,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                     return
                 }
                 // check if it is a robust password
-                if (!checkPasswordCharacters(editText_password.toString())) {
+                if (!checkPasswordCharacters(editText_password.text.toString())) {
                     Toast.makeText(
                         baseContext, R.string.weak_password,
                         Toast.LENGTH_SHORT
@@ -49,7 +48,9 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                     return
                 }
                 // check if the password is the same as the verification password
-                if (editText_password.toString() != editText_verifyPassword.toString()) {
+                if (!editText_password.text.toString()
+                        .equals(editText_verifyPassword.text.toString())
+                ) {
                     Toast.makeText(
                         baseContext, R.string.different_passwords,
                         Toast.LENGTH_SHORT
@@ -57,7 +58,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                     return
                 }
                 // check whether the data processing has been authorized
-                if (!checkBox_authorizesData.isActivated) {
+                if (!checkBox_authorizesData.isChecked) {
                     Toast.makeText(
                         baseContext, R.string.unauthorized_data_processing,
                         Toast.LENGTH_SHORT
@@ -66,12 +67,10 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                 }
 
                 // check if it's a valid email and check if the email has already been used
-                if (!TextUtils.isEmpty(editText_email.toString()) && android.util.Patterns.EMAIL_ADDRESS.matcher(
-                        editText_email.toString()
+                if (TextUtils.isEmpty(editText_email.text.toString()) || !android.util.Patterns.EMAIL_ADDRESS.matcher(
+                        editText_email.text.toString()
                     ).matches()
                 ) {
-                    // TODO: check if the email has already been used
-                } else {
                     Toast.makeText(
                         baseContext, R.string.invalid_email,
                         Toast.LENGTH_SHORT
@@ -81,12 +80,12 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
 
                 // create an account
                 createAccount(
-                    editText_email.toString(),
-                    editText_password.toString(),
-                    editText_name.toString(),
-                    editText_surname.toString(),
-                    editText_city.toString(),
-                    editText_address.toString()
+                    editText_email.text.toString(),
+                    editText_password.text.toString(),
+                    editText_name.text.toString(),
+                    editText_surname.text.toString(),
+                    editText_city.text.toString(),
+                    editText_address.text.toString()
                 )
             }
         }
@@ -133,13 +132,13 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
      * - special character [@#$%^&+=]
      */
     private fun checkPasswordCharacters(password: String?): Boolean {
-        if (editText_password.text.toString().length < 6)
+        if (password == null)
             return false
-        val pattern: Pattern
-        val matcher: Matcher
+        if (password.length < 6)
+            return false
         val charactersRequired = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@#$%^&+=])(?=\\S+$).{4,}$"
-        pattern = Pattern.compile(charactersRequired)
-        matcher = pattern.matcher(password)
+        val pattern = Pattern.compile(charactersRequired)
+        val matcher = pattern.matcher(password)
         return matcher.matches()
     }
 
