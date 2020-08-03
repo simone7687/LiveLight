@@ -2,6 +2,8 @@ package it.uniupo.livelight
 
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
@@ -35,5 +37,35 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu, menu)
+        return true;
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.navigation_settings -> {
+                val intentSettings = Intent(this, SettingsActivity::class.java)
+                startActivity(intentSettings)
+            }
+            R.id.navigation_logout -> {
+                logout()
+            }
+        }
+        return true
+    }
+
+    private fun logout() {
+        val auth = FirebaseAuth.getInstance()
+        try {
+            auth.signOut()
+            val intentLogin = Intent(this, LoginActivity::class.java)
+            startActivity(intentLogin)
+            finish()
+        } catch (e: Exception) {
+
+        }
     }
 }

@@ -10,13 +10,12 @@
     <string name="different_passwords">Hai inserito password diverse</string>
     <string name="weak_password">La password è troppo debole</string>
     <string name="unauthorized_data_processing">Devi accettare il trattamento deti per continuare</string>
-    <!-- Login -->
+    <!-- Login & Registration -->
     <string name="login">Accedi</string>
     <string name="not_registered">Non sei ancora registrato?</string>
     <string name="login_remember">Mantieni l\'accesso.</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
-    <!-- Registration -->
     <string name="registration">Registrati</string>
     <string name="first_name">Nome</string>
     <string name="surname">Cognome</string>
@@ -24,6 +23,6 @@
     <string name="authorizes_data">Autorizzo al trattamento dei miei dati.</string>
     <!-- Main -->
     <string name="title_activity_main">MainActivity</string>
-    <string name="tab_text_1">Tab 1</string>
-    <string name="tab_text_2">Tab 2</string>
+    <!-- Settings -->
+    <string name="settings">Imposttazioni</string>
 </resources>

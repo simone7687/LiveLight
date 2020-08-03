@@ -10,21 +10,23 @@
     <string name="different_passwords">You entered different passwords</string>
     <string name="weak_password">Password is too weak</string>
     <string name="unauthorized_data_processing">You must accept your treatment to continue</string>
-    <!-- Login -->
+    <!-- Login & Registration -->
     <string name="login">Login</string>
     <string name="not_registered">Not registered yet?</string>
     <string name="login_remember">Keep me logged in.</string>
     <string name="email">Email</string>
     <string name="password">Password</string>
-    <!-- Registration -->
     <string name="registration">Sign in</string>
     <string name="first_name">Name</string>
     <string name="surname">Surname</string>
     <string name="verify_password">Confirm Password</string>
     <string name="authorizes_data">I authorize the treatment of my data.</string>
+    <string name="logout" translatable="false">Log out</string>
     <!-- Main -->
     <string name="title_activity_main">MainActivity</string>
     <string name="title_home">Home</string>
     <string name="title_dashboard">Dashboard</string>
     <string name="title_notifications">Notifications</string>
+    <!-- Settings -->
+    <string name="settings">Settings</string>
 </resources>
