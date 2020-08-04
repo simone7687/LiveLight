@@ -1,4 +1,4 @@
-package it.uniupo.livelight.ui.home
+package it.uniupo.livelight.messages
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,20 +10,20 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import it.uniupo.livelight.R
 
-class HomeFragment : Fragment() {
+class MessagesFragment : Fragment() {
 
-    private lateinit var homeViewModel: HomeViewModel
+    private lateinit var messagesViewModel: MessagesViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        homeViewModel =
-            ViewModelProviders.of(this).get(HomeViewModel::class.java)
-        val root = inflater.inflate(R.layout.fragment_home, container, false)
-        val textView: TextView = root.findViewById(R.id.text_home)
-        homeViewModel.text.observe(viewLifecycleOwner, Observer {
+        messagesViewModel =
+            ViewModelProviders.of(this).get(MessagesViewModel::class.java)
+        val root = inflater.inflate(R.layout.fragment_messages, container, false)
+        val textView: TextView = root.findViewById(R.id.text_messages)
+        messagesViewModel.text.observe(viewLifecycleOwner, Observer {
             textView.text = it
         })
         return root

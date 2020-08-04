@@ -1,4 +1,4 @@
-package it.uniupo.livelight
+package it.uniupo.livelight.login
 
 import android.content.Intent
 import android.os.Bundle
@@ -8,6 +8,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import it.uniupo.livelight.MainActivity
+import it.uniupo.livelight.R
 import kotlinx.android.synthetic.main.activity_registration.*
 import java.util.regex.Pattern
 
@@ -34,7 +36,8 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                 // check for empty fields
                 if (!checkEmptyFields()) {
                     Toast.makeText(
-                        baseContext, R.string.empty_input_field,
+                        baseContext,
+                        R.string.empty_input_field,
                         Toast.LENGTH_SHORT
                     ).show()
                     return
@@ -52,7 +55,8 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                         .equals(editText_verifyPassword.text.toString())
                 ) {
                     Toast.makeText(
-                        baseContext, R.string.different_passwords,
+                        baseContext,
+                        R.string.different_passwords,
                         Toast.LENGTH_SHORT
                     ).show()
                     return
@@ -60,7 +64,8 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                 // check whether the data processing has been authorized
                 if (!checkBox_authorizesData.isChecked) {
                     Toast.makeText(
-                        baseContext, R.string.unauthorized_data_processing,
+                        baseContext,
+                        R.string.unauthorized_data_processing,
                         Toast.LENGTH_SHORT
                     ).show()
                     return

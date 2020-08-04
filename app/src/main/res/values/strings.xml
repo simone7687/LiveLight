@@ -24,9 +24,9 @@
     <string name="logout" translatable="false">Log out</string>
     <!-- Main -->
     <string name="title_activity_main">MainActivity</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="profile">Profile</string>
+    <string name="search">Search</string>
+    <string name="messages">Messages</string>
     <!-- Settings -->
     <string name="settings">Settings</string>
 </resources>

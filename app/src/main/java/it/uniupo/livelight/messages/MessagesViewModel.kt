@@ -1,13 +1,13 @@
-package it.uniupo.livelight.ui.notifications
+package it.uniupo.livelight.messages
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class NotificationsViewModel : ViewModel() {
+class MessagesViewModel : ViewModel() {
 
     private val _text = MutableLiveData<String>().apply {
-        value = "This is notifications Fragment"
+        value = "This is messages Fragment"
     }
     val text: LiveData<String> = _text
 }
