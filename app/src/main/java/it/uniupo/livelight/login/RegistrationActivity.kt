@@ -22,12 +22,15 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_registration)
 
-        button_registration.setOnClickListener(this)
+        // ...
+        auth = FirebaseAuth.getInstance()
 
         // Back button
         val actionBar = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
         actionBar?.title = getString(R.string.registration)
+
+        button_registration.setOnClickListener(this)
     }
 
     override fun onClick(v: View) {
