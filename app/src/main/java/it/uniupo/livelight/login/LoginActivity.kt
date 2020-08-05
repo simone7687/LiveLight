@@ -11,6 +11,9 @@ import it.uniupo.livelight.MainActivity
 import it.uniupo.livelight.R
 import kotlinx.android.synthetic.main.activity_login.*
 
+/**
+ * Activity to login
+ */
 class LoginActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var auth: FirebaseAuth
 
@@ -18,20 +21,17 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+        // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
 
         button_login.setOnClickListener(this)
         button_registration.setOnClickListener(this)
-
-        //Set activity title and disable back button
-        val actionBar = supportActionBar
-        actionBar?.title = getString(R.string.login)
     }
 
     override fun onClick(v: View) {
         when (v.id) {
             R.id.button_login -> {
-                // Verifies that credentials are valid
+                // check that all fields have been filled
                 if (editText_email.text.toString()
                         .isNullOrEmpty() || editText_password.text.toString().isNullOrEmpty()
                 ) {
@@ -52,11 +52,11 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                     ).show()
                     return
                 }
-                // Try logging in
+                // authentication with email and password
                 login(editText_email.text.toString(), editText_password.text.toString())
             }
             R.id.button_registration -> {
-                // Navigate to RegistrationActivity
+                // navigate to RegistrationActivity
                 val intentRegistration = Intent(this, RegistrationActivity::class.java)
                 startActivity(intentRegistration)
             }
@@ -71,7 +71,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
     private fun login(email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener(this) {
-                // Navigate to MainActivity
+                // navigate to MainActivity
                 val intentMain = Intent(this, MainActivity::class.java)
                 startActivity(intentMain)
                 finish()

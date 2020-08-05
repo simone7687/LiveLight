@@ -13,6 +13,9 @@ import it.uniupo.livelight.R
 import kotlinx.android.synthetic.main.activity_registration.*
 import java.util.regex.Pattern
 
+/**
+ * Activity to register
+ */
 class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
 
     private lateinit var auth: FirebaseAuth
@@ -22,13 +25,12 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_registration)
 
-        // ...
+        // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
 
         // Back button
         val actionBar = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
-        actionBar?.title = getString(R.string.registration)
 
         button_registration.setOnClickListener(this)
     }
@@ -137,14 +139,15 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
      * - lowercase letter [a-z]
      * - uppercase letter [A-Z]
      * - number [0-9]
-     * - special character [@#$%^&+=]
+     * - special character [$%'^&@*#+=]
      */
     private fun checkPasswordCharacters(password: String?): Boolean {
         if (password == null)
             return false
         if (password.length < 6)
             return false
-        val charactersRequired = "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@#$%^&+=])(?=\\S+$).{4,}$"
+        val charactersRequired =
+            "^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[$%'^&@*#+=])(?=\\S+$).{4,}$"
         val pattern = Pattern.compile(charactersRequired)
         val matcher = pattern.matcher(password)
         return matcher.matches()
@@ -166,20 +169,23 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
             password
         )
             .addOnSuccessListener(this) {
-                val data = hashMapOf(
+                val user_details_data = hashMapOf(
                     "Name" to name,
                     "Surname" to surname,
                     "City" to city,
                     "Address" to address
                 )
                 db.collection("user_details").document(auth.currentUser?.uid.toString().toString())
-                    .set(data as Map<String, Any>)
+                    .set(user_details_data as Map<String, Any>)
                     .addOnSuccessListener {
                         val intentMain = Intent(this, MainActivity::class.java)
                         startActivity(intentMain)
                         finish()
                     }.addOnFailureListener { exception ->
                         Toast.makeText(this, exception.localizedMessage, Toast.LENGTH_SHORT).show()
+                        // if not, delete the user who has just been created
+                        val user = auth.currentUser!!
+                        user.delete()
                     }
             }.addOnFailureListener { exception ->
                 Toast.makeText(

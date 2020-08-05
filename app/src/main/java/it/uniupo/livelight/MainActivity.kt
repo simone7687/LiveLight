@@ -13,12 +13,16 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import it.uniupo.livelight.login.LoginActivity
 
+/**
+ * MainActivity is the primary and main activity that allows navigation in Fragments
+ */
 class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // check if you have already logged in. if not, navigate to LoginActivity
         if (FirebaseAuth.getInstance().currentUser == null) {
             val intentLogin = Intent(this, LoginActivity::class.java)
             startActivity(intentLogin)
@@ -33,16 +37,21 @@ class MainActivity : AppCompatActivity() {
         // menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.navigation_profile, R.id.navigation_search, R.id.navigation_messages
+                R.id.navigation_profile,
+                R.id.navigation_search,
+                R.id.navigation_messages
             )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
     }
 
+    /**
+     * Adds the menu "with 3 dots"
+     */
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu, menu)
-        return true;
+        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -58,6 +67,9 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
+    /**
+     * Logs out and navigate to LoginActivity
+     */
     private fun logout() {
         val auth = FirebaseAuth.getInstance()
         try {
