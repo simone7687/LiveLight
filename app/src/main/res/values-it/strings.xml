@@ -23,9 +23,11 @@
     <string name="authorizes_data">Autorizzo al trattamento dei miei dati.</string>
     <!-- Main -->
     <string name="title_activity_main">MainActivity</string>
-    <string name="profile">Profilo</string>
     <string name="search">Cerca</string>
     <string name="messages">Messaggi</string>
+    <!-- Main profile -->
+    <string name="profile">Profilo</string>
+    <string name="profile_description">Ciao, ecco i post che hai publicato:</string>
     <!-- Settings -->
     <string name="settings">Imposttazioni</string>
 </resources>

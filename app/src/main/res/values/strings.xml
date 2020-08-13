@@ -24,9 +24,11 @@
     <string name="logout" translatable="false">Log out</string>
     <!-- Main -->
     <string name="title_activity_main">MainActivity</string>
-    <string name="profile">Profile</string>
     <string name="search">Search</string>
     <string name="messages">Messages</string>
+    <!-- Main profile -->
+    <string name="profile">Profile</string>
+    <string name="profile_description">Hi, here are the posts you posted:</string>
     <!-- Settings -->
     <string name="settings">Settings</string>
 </resources>
