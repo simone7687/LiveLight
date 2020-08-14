@@ -20,6 +20,9 @@
         <activity
             android:name=".login.RegistrationActivity"
             android:label="@string/registration" />
+        <activity
+            android:name=".post.PostPublisherActivity"
+            android:label="@string/new_post" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

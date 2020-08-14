@@ -4,6 +4,12 @@
     <string name="close">Chiudi</string>
     <string name="city">Città</string>
     <string name="address">Indirizzo</string>
+    <string name="title">Titolo</string>
+    <string name="description">Descrizione</string>
+    <string name="available_until_date">Disponibile fino</string>
+    <string name="category_selection">Seleziona una categoria</string>
+    <string name="image_upload">Carica un\'immagine</string>
+    <string name="publish">Pubblica</string>
     <!-- Warning -->
     <string name="empty_input_field">Hai dimenticato alcuni campi</string>
     <string name="invalid_email">Devi inserire un indirizzo email valido</string>
@@ -30,4 +36,7 @@
     <string name="profile_description">Ciao, ecco i post che hai publicato:</string>
     <!-- Settings -->
     <string name="settings">Imposttazioni</string>
+    <!-- Post Publisher -->
+    <string name="new_post">Nuovo post</string>
+    <string name="publish_post_description">Pubblica un nuvo post</string>
 </resources>
