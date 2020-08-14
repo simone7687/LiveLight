@@ -16,21 +16,21 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/profile_description"
-            android:textSize="17sp" />
+            android:textSize="17sp"
+            android:layout_marginBottom="@dimen/element_margin" />
 
         <View
             android:id="@+id/divider"
             android:layout_width="match_parent"
             android:layout_height="1dp"
             android:background="?android:attr/listDivider"
-            android:layout_marginTop="10dp" />
+            android:layout_marginBottom="@dimen/element_margin" />
 
         <ListView
             android:id="@+id/list_post"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:smoothScrollbar="true"
-            android:layout_marginTop="10dp" />
+            android:smoothScrollbar="true" />
     </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
