@@ -10,8 +10,10 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
 import it.uniupo.livelight.login.LoginActivity
+import it.uniupo.livelight.post.PostPublisherActivity
 
 /**
  * MainActivity is the primary and main activity that allows navigation in Fragments
@@ -44,6 +46,31 @@ class MainActivity : AppCompatActivity() {
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navView.setupWithNavController(navController)
+
+        // Handle Floating Action Button
+        findViewById<FloatingActionButton>(R.id.fab)?.setOnClickListener {
+            val intent = Intent(this, PostPublisherActivity()::class.java)
+            startActivity(intent)
+        }
+
+        navView.setOnNavigationItemSelectedListener { item ->
+            when (item.itemId) {
+                R.id.navigation_messages -> {
+                    // hide FloatingActionButton
+                    if (!findViewById<FloatingActionButton>(R.id.fab).isOrWillBeHidden)
+                        findViewById<FloatingActionButton>(R.id.fab)?.hide()
+                }
+                R.id.navigation_search -> {
+                    if (findViewById<FloatingActionButton>(R.id.fab).isOrWillBeHidden)
+                        findViewById<FloatingActionButton>(R.id.fab)?.show()
+                }
+                R.id.navigation_profile -> {
+                    if (findViewById<FloatingActionButton>(R.id.fab).isOrWillBeHidden)
+                        findViewById<FloatingActionButton>(R.id.fab)?.show()
+                }
+            }
+            true
+        }
     }
 
     /**

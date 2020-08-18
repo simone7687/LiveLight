@@ -33,13 +33,4 @@
             android:smoothScrollbar="true" />
     </LinearLayout>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginBottom="@dimen/fab_margin"
-        android:src="@drawable/ic_baseline_add_white_24" />
 </RelativeLayout>
