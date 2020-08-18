@@ -18,8 +18,7 @@ class PostPublisherActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        overridePendingTransition(0, 0)
-        setContentView(R.layout.fragment_post_publisher)
+        setContentView(R.layout.activity_post_publisher)
 
         loadCategoriesSpinner(Locale.getDefault().language)
 

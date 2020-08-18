@@ -56,8 +56,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                     return
                 }
                 // check if the password is the same as the verification password
-                if (!editText_password.text.toString()
-                        .equals(editText_verifyPassword.text.toString())
+                if (editText_password.text.toString() != editText_verifyPassword.text.toString()
                 ) {
                     Toast.makeText(
                         baseContext,
@@ -175,7 +174,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                     "City" to city,
                     "Address" to address
                 )
-                db.collection("user_details").document(auth.currentUser?.uid.toString().toString())
+                db.collection("user_details").document(auth.currentUser?.uid.toString())
                     .set(user_details_data as Map<String, Any>)
                     .addOnSuccessListener {
                         val intentMain = Intent(this, MainActivity::class.java)

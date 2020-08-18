@@ -34,7 +34,7 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
             R.id.button_login -> {
                 // check that all fields have been filled
                 if (editText_email.text.toString()
-                        .isNullOrEmpty() || editText_password.text.toString().isNullOrEmpty()
+                        .isEmpty() || editText_password.text.toString().isEmpty()
                 ) {
                     Toast.makeText(
                         baseContext, getString(R.string.empty_input_field),
