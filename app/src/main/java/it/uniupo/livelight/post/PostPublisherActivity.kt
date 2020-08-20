@@ -22,7 +22,7 @@ import kotlin.collections.ArrayList
 class PostPublisherActivity : AppCompatActivity() {
     private val db = FirebaseFirestore.getInstance()
 
-    private val REQUEST_CODE = 100
+    private val REQUEST_CODE_GALLERY = 100
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,16 +34,16 @@ class PostPublisherActivity : AppCompatActivity() {
             // Check permissions
             // if OS < Marshmallow
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-                openGalleryForImage();
+                openGalleryForImage()
             } else {
                 // Check READ_EXTERNAL_STORAGE permission
                 if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) ==
                     PackageManager.PERMISSION_DENIED
                 ) {
-                    val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE);
-                    requestPermissions(permissions, REQUEST_CODE);
+                    val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+                    requestPermissions(permissions, REQUEST_CODE_GALLERY)
                 } else {
-                    openGalleryForImage();
+                    openGalleryForImage()
                 }
             }
         }
@@ -108,7 +108,7 @@ class PostPublisherActivity : AppCompatActivity() {
     private fun openGalleryForImage() {
         val intent = Intent(Intent.ACTION_PICK)
         intent.type = "image/*"
-        startActivityForResult(intent, REQUEST_CODE)
+        startActivityForResult(intent, REQUEST_CODE_GALLERY)
     }
 
     // Requested permission
@@ -118,7 +118,7 @@ class PostPublisherActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         when (requestCode) {
-            REQUEST_CODE -> {
+            REQUEST_CODE_GALLERY -> {
                 if (grantResults.isNotEmpty() && grantResults[0] ==
                     PackageManager.PERMISSION_GRANTED
                 ) {
@@ -133,9 +133,9 @@ class PostPublisherActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
+        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_GALLERY && data != null) {
             // Inserts the image and makes it visible
-            image_view.setImageURI(data?.data)
+            image_view.setImageURI(data.data)
             image_view.visibility = View.VISIBLE
         }
     }
