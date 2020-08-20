@@ -1,6 +1,7 @@
 package it.uniupo.livelight.post
 
 import android.Manifest
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -67,6 +68,11 @@ class PostPublisherActivity : AppCompatActivity() {
                     openCameraForImage()
                 }
             }
+        }
+
+        editTextDate.setOnFocusChangeListener { _, hasFocus ->
+            if (hasFocus)
+                openDatePickerDialog()
         }
 
         // Back button
@@ -181,5 +187,28 @@ class PostPublisherActivity : AppCompatActivity() {
             image_view.setImageBitmap(data.extras?.get("data") as Bitmap)
             image_view.visibility = View.VISIBLE
         }
+    }
+
+    /**
+     * Open Date Picker Dialog to select the day
+     */
+    private fun openDatePickerDialog() {
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        val dpd = DatePickerDialog(this, { _, year, monthOfYear, dayOfMonth ->
+            var mon: String = monthOfYear.toString()
+            if (mon.length < 2)
+                mon = "0$monthOfYear"
+
+            var d: String = dayOfMonth.toString()
+            if (d.length < 2)
+                d = "0$monthOfYear"
+
+            editTextDate.setText("${d}/${mon}/${year}")
+        }, year, month, day)
+        dpd.show()
     }
 }
