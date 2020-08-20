@@ -9,6 +9,7 @@
     <string name="available_until_date">Disponibile fino</string>
     <string name="category_selection">Seleziona una categoria</string>
     <string name="image_upload">Carica un\'immagine</string>
+    <string name="take_photo">Scatta una foto</string>
     <string name="publish">Pubblica</string>
     <!-- Warning -->
     <string name="empty_input_field">Hai dimenticato alcuni campi</string>

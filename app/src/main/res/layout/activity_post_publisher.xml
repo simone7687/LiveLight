@@ -72,6 +72,13 @@
                 android:orientation="vertical">
 
                 <Button
+                    android:id="@+id/button_camera"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:drawableStart="@drawable/ic_twotone_photo_camera_24"
+                    android:text="@string/take_photo" />
+
+                <Button
                     android:id="@+id/button_image"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

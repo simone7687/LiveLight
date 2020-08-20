@@ -3,8 +3,10 @@ package it.uniupo.livelight.post
 import android.Manifest
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Spinner
@@ -23,6 +25,7 @@ class PostPublisherActivity : AppCompatActivity() {
     private val db = FirebaseFirestore.getInstance()
 
     private val REQUEST_CODE_GALLERY = 100
+    private val REQUEST_CODE_CAMERA = 200
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +47,24 @@ class PostPublisherActivity : AppCompatActivity() {
                     requestPermissions(permissions, REQUEST_CODE_GALLERY)
                 } else {
                     openGalleryForImage()
+                }
+            }
+        }
+
+        button_camera.setOnClickListener {
+            // Check permissions
+            // if OS < Marshmallow
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                openCameraForImage()
+            } else {
+                // Check READ_EXTERNAL_STORAGE permission
+                if (checkSelfPermission(Manifest.permission.CAMERA) ==
+                    PackageManager.PERMISSION_DENIED
+                ) {
+                    val permissions = arrayOf(Manifest.permission.CAMERA)
+                    requestPermissions(permissions, REQUEST_CODE_CAMERA)
+                } else {
+                    openCameraForImage()
                 }
             }
         }
@@ -111,6 +132,14 @@ class PostPublisherActivity : AppCompatActivity() {
         startActivityForResult(intent, REQUEST_CODE_GALLERY)
     }
 
+    /**
+     * Launch the camera activity to take a photo
+     */
+    private fun openCameraForImage() {
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        startActivityForResult(intent, REQUEST_CODE_CAMERA)
+    }
+
     // Requested permission
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -128,6 +157,16 @@ class PostPublisherActivity : AppCompatActivity() {
                     Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show()
                 }
             }
+            REQUEST_CODE_CAMERA -> {
+                if (grantResults.isNotEmpty() && grantResults[0] ==
+                    PackageManager.PERMISSION_GRANTED
+                ) {
+                    // open Camera
+                    openCameraForImage()
+                } else {
+                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 
@@ -136,6 +175,10 @@ class PostPublisherActivity : AppCompatActivity() {
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_GALLERY && data != null) {
             // Inserts the image and makes it visible
             image_view.setImageURI(data.data)
+            image_view.visibility = View.VISIBLE
+        }
+        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_CAMERA && data != null) {
+            image_view.setImageBitmap(data.extras?.get("data") as Bitmap)
             image_view.visibility = View.VISIBLE
         }
     }

@@ -9,6 +9,7 @@
     <string name="available_until_date">Available until</string>
     <string name="category_selection">Select a category</string>
     <string name="image_upload">Upload image</string>
+    <string name="take_photo">Take a photo</string>
     <string name="publish">Publish</string>
     <!-- Warning -->
     <string name="empty_input_field">You forgot some fields</string>
