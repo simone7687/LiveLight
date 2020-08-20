@@ -1,12 +1,18 @@
 package it.uniupo.livelight.post
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
+import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.firestore.FirebaseFirestore
 import it.uniupo.livelight.R
+import kotlinx.android.synthetic.main.activity_post_publisher.*
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -16,11 +22,31 @@ import kotlin.collections.ArrayList
 class PostPublisherActivity : AppCompatActivity() {
     private val db = FirebaseFirestore.getInstance()
 
+    private val REQUEST_CODE = 100
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_post_publisher)
 
         loadCategoriesSpinner(Locale.getDefault().language)
+
+        button_image.setOnClickListener {
+            // Check permissions
+            // if OS < Marshmallow
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                openGalleryForImage();
+            } else {
+                // Check READ_EXTERNAL_STORAGE permission
+                if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) ==
+                    PackageManager.PERMISSION_DENIED
+                ) {
+                    val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE);
+                    requestPermissions(permissions, REQUEST_CODE);
+                } else {
+                    openGalleryForImage();
+                }
+            }
+        }
 
         // Back button
         val actionBar = supportActionBar
@@ -73,6 +99,44 @@ class PostPublisherActivity : AppCompatActivity() {
                 baseContext, exception.localizedMessage,
                 Toast.LENGTH_SHORT
             ).show()
+        }
+    }
+
+    /**
+     * Launch the gallery activity to select an image
+     */
+    private fun openGalleryForImage() {
+        val intent = Intent(Intent.ACTION_PICK)
+        intent.type = "image/*"
+        startActivityForResult(intent, REQUEST_CODE)
+    }
+
+    // Requested permission
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        when (requestCode) {
+            REQUEST_CODE -> {
+                if (grantResults.isNotEmpty() && grantResults[0] ==
+                    PackageManager.PERMISSION_GRANTED
+                ) {
+                    // open Gallery
+                    openGalleryForImage()
+                } else {
+                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
+            // Inserts the image and makes it visible
+            image_view.setImageURI(data?.data)
+            image_view.visibility = View.VISIBLE
         }
     }
 }
