@@ -53,23 +53,14 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
-        navView.setOnNavigationItemSelectedListener { item ->
-            when (item.itemId) {
-                R.id.navigation_messages -> {
-                    // hide FloatingActionButton
-                    if (!findViewById<FloatingActionButton>(R.id.fab).isOrWillBeHidden)
-                        findViewById<FloatingActionButton>(R.id.fab)?.hide()
-                }
-                R.id.navigation_search -> {
-                    if (findViewById<FloatingActionButton>(R.id.fab).isOrWillBeHidden)
-                        findViewById<FloatingActionButton>(R.id.fab)?.show()
-                }
-                R.id.navigation_profile -> {
-                    if (findViewById<FloatingActionButton>(R.id.fab).isOrWillBeHidden)
-                        findViewById<FloatingActionButton>(R.id.fab)?.show()
-                }
+        // hide FloatingActionButton
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            // hide FloatingActionButton
+            if (destination.id in arrayOf(R.id.navigation_messages)) {
+                findViewById<FloatingActionButton>(R.id.fab)?.hide()
+            } else {
+                findViewById<FloatingActionButton>(R.id.fab)?.show()
             }
-            true
         }
     }
 
