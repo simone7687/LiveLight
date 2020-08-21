@@ -18,7 +18,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.LocationServices
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import it.uniupo.livelight.R
 import kotlinx.android.synthetic.main.activity_post_publisher.*
 import java.util.*
@@ -29,6 +31,8 @@ import kotlin.collections.ArrayList
  */
 class PostPublisherActivity : AppCompatActivity() {
     private val db = FirebaseFirestore.getInstance()
+    private val auth = FirebaseAuth.getInstance()
+    private val storage = FirebaseStorage.getInstance()
 
     private val REQUEST_CODE_GALLERY = 100
     private val REQUEST_CODE_CAMERA = 200
@@ -306,5 +310,49 @@ class PostPublisherActivity : AppCompatActivity() {
                 }
             }
         return lastLocation
+    }
+
+    /**
+     * Upload the image to the server.
+     * In case it has had any errors it returns null.
+     */
+    private fun uploadImage(imagePath: Uri?): Uri? {
+        if (imagePath == null) {
+            Toast.makeText(
+                this,
+                getString(R.string.empty_input_field),
+                Toast.LENGTH_SHORT
+            ).show()
+            return null;
+        }
+
+        // Generate the name file: "use id"_"random ID"
+        val path =
+            storage.reference.child("uploaded_images/${auth.currentUser!!.uid + "_" + UUID.randomUUID()}")
+
+        // Given image ulr path
+        val url = path.putFile(imagePath)
+
+        // Upload process management
+        var imageURL: Uri? = null
+        url.continueWithTask { task ->
+            if (!task.isSuccessful) {
+                task.exception?.let {
+                    throw it
+                }
+            }
+            path.downloadUrl
+        }.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                imageURL = task.result
+            } else {
+                Toast.makeText(
+                    this,
+                    getString(R.string.image_upload_error),
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
+        return imageURL
     }
 }
