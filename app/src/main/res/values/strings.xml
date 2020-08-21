@@ -17,6 +17,7 @@
     <string name="different_passwords">You entered different passwords</string>
     <string name="weak_password">Password is too weak</string>
     <string name="unauthorized_data_processing">You must accept your treatment to continue</string>
+    <string name="no_location">You cannot get the location</string>
     <!-- Login & Registration -->
     <string name="login">Login</string>
     <string name="not_registered">Not registered yet?</string>

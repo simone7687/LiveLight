@@ -5,6 +5,7 @@ import android.app.DatePickerDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
+import android.location.Location
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
@@ -13,6 +14,8 @@ import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import com.google.android.gms.location.LocationServices
 import com.google.firebase.firestore.FirebaseFirestore
 import it.uniupo.livelight.R
 import kotlinx.android.synthetic.main.activity_post_publisher.*
@@ -27,6 +30,9 @@ class PostPublisherActivity : AppCompatActivity() {
 
     private val REQUEST_CODE_GALLERY = 100
     private val REQUEST_CODE_CAMERA = 200
+    private val REQUEST_CODE_LOCATION = 300
+
+    private var lastLocation: Location? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -73,6 +79,28 @@ class PostPublisherActivity : AppCompatActivity() {
         editTextDate.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus)
                 openDatePickerDialog()
+        }
+
+        button_publish.setOnClickListener {
+            var l: Location? = null
+            // Check permissions
+            // if OS < Marshmallow
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+                lastLocation = getLastLocation()
+            } else {
+                // Requires permission to use the location
+                startLocationPermissionRequest()
+
+                // Check READ_EXTERNAL_STORAGE permission
+                if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) ==
+                    PackageManager.PERMISSION_DENIED
+                ) {
+                    val permissions = arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION)
+                    requestPermissions(permissions, REQUEST_CODE_LOCATION)
+                } else {
+                    lastLocation = getLastLocation()
+                }
+            }
         }
 
         // Back button
@@ -173,6 +201,16 @@ class PostPublisherActivity : AppCompatActivity() {
                     Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show()
                 }
             }
+            REQUEST_CODE_LOCATION -> {
+                if (grantResults.isNotEmpty() && grantResults[0] ==
+                    PackageManager.PERMISSION_GRANTED
+                ) {
+                    // update the last Localization
+                    lastLocation = getLastLocation()
+                } else {
+                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 
@@ -210,5 +248,34 @@ class PostPublisherActivity : AppCompatActivity() {
             editTextDate.setText("${d}/${mon}/${year}")
         }, year, month, day)
         dpd.show()
+    }
+
+    /**
+     * Requires location permit
+     */
+    private fun startLocationPermissionRequest() {
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
+            REQUEST_CODE_LOCATION
+        )
+    }
+
+    /**
+     * Returns the current position.
+     * If you have not been able to get the position returns null and void.
+     */
+    private fun getLastLocation(): Location? {
+        var fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        var lastLocation: Location? = null
+        fusedLocationClient!!.lastLocation
+            .addOnCompleteListener(this) { task ->
+                if (task.isSuccessful && task.result != null) {
+                    lastLocation = task.result
+                } else {
+                    Toast.makeText(this, R.string.no_location, Toast.LENGTH_SHORT).show()
+                }
+            }
+        return lastLocation
     }
 }

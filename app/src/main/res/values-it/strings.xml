@@ -17,6 +17,7 @@
     <string name="different_passwords">Hai inserito password diverse</string>
     <string name="weak_password">La password è troppo debole</string>
     <string name="unauthorized_data_processing">Devi accettare il trattamento deti per continuare</string>
+    <string name="no_location">Non è possibile ottenere la posizione</string>
     <!-- Login & Registration -->
     <string name="login">Accedi</string>
     <string name="not_registered">Non sei ancora registrato?</string>
