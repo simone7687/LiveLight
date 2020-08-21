@@ -6,10 +6,12 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.location.Location
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
+import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.Toast
@@ -33,6 +35,8 @@ class PostPublisherActivity : AppCompatActivity() {
     private val REQUEST_CODE_LOCATION = 300
 
     private var lastLocation: Location? = null
+    private var image: Uri? = null
+    private var categorySelected: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,16 +85,23 @@ class PostPublisherActivity : AppCompatActivity() {
                 openDatePickerDialog()
         }
 
+        spinner_categories.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
+                // p2: position
+                categorySelected = p2
+            }
+
+            override fun onNothingSelected(p0: AdapterView<*>?) {
+                TODO("Not yet implemented")
+            }
+        }
+
         button_publish.setOnClickListener {
-            var l: Location? = null
             // Check permissions
             // if OS < Marshmallow
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
                 lastLocation = getLastLocation()
             } else {
-                // Requires permission to use the location
-                startLocationPermissionRequest()
-
                 // Check READ_EXTERNAL_STORAGE permission
                 if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) ==
                     PackageManager.PERMISSION_DENIED
@@ -220,6 +231,7 @@ class PostPublisherActivity : AppCompatActivity() {
             // Inserts the image and makes it visible
             image_view.setImageURI(data.data)
             image_view.visibility = View.VISIBLE
+            image = data.data
         }
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_CAMERA && data != null) {
             image_view.setImageBitmap(data.extras?.get("data") as Bitmap)
@@ -268,6 +280,23 @@ class PostPublisherActivity : AppCompatActivity() {
     private fun getLastLocation(): Location? {
         var fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
         var lastLocation: Location? = null
+        if (ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                this,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return null
+        }
         fusedLocationClient!!.lastLocation
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful && task.result != null) {
