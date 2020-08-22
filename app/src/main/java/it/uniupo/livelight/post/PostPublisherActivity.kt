@@ -7,7 +7,6 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.location.Location
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
@@ -38,7 +37,6 @@ class PostPublisherActivity : AppCompatActivity() {
     private val REQUEST_CODE_CAMERA = 200
     private val REQUEST_CODE_LOCATION = 300
 
-    private var lastLocation: Location? = null
     private var image: Uri? = null
     private var categorySelected: Int = 0
 
@@ -50,37 +48,27 @@ class PostPublisherActivity : AppCompatActivity() {
 
         button_image.setOnClickListener {
             // Check permissions
-            // if OS < Marshmallow
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-                openGalleryForImage()
+            // Check READ_EXTERNAL_STORAGE permission
+            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) ==
+                PackageManager.PERMISSION_DENIED
+            ) {
+                val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+                requestPermissions(permissions, REQUEST_CODE_GALLERY)
             } else {
-                // Check READ_EXTERNAL_STORAGE permission
-                if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) ==
-                    PackageManager.PERMISSION_DENIED
-                ) {
-                    val permissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
-                    requestPermissions(permissions, REQUEST_CODE_GALLERY)
-                } else {
-                    openGalleryForImage()
-                }
+                openGalleryForImage()
             }
         }
 
         button_camera.setOnClickListener {
             // Check permissions
-            // if OS < Marshmallow
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-                openCameraForImage()
+            // Check READ_EXTERNAL_STORAGE permission
+            if (checkSelfPermission(Manifest.permission.CAMERA) ==
+                PackageManager.PERMISSION_DENIED
+            ) {
+                val permissions = arrayOf(Manifest.permission.CAMERA)
+                requestPermissions(permissions, REQUEST_CODE_CAMERA)
             } else {
-                // Check READ_EXTERNAL_STORAGE permission
-                if (checkSelfPermission(Manifest.permission.CAMERA) ==
-                    PackageManager.PERMISSION_DENIED
-                ) {
-                    val permissions = arrayOf(Manifest.permission.CAMERA)
-                    requestPermissions(permissions, REQUEST_CODE_CAMERA)
-                } else {
-                    openCameraForImage()
-                }
+                openCameraForImage()
             }
         }
 
@@ -102,19 +90,14 @@ class PostPublisherActivity : AppCompatActivity() {
 
         button_publish.setOnClickListener {
             // Check permissions
-            // if OS < Marshmallow
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-                lastLocation = getLastLocation()
+            // Check READ_EXTERNAL_STORAGE permission
+            if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) ==
+                PackageManager.PERMISSION_DENIED
+            ) {
+                val permissions = arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION)
+                requestPermissions(permissions, REQUEST_CODE_LOCATION)
             } else {
-                // Check READ_EXTERNAL_STORAGE permission
-                if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) ==
-                    PackageManager.PERMISSION_DENIED
-                ) {
-                    val permissions = arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION)
-                    requestPermissions(permissions, REQUEST_CODE_LOCATION)
-                } else {
-                    lastLocation = getLastLocation()
-                }
+                publishPostWhichFields()
             }
         }
 
@@ -203,7 +186,7 @@ class PostPublisherActivity : AppCompatActivity() {
                     // open Gallery
                     openGalleryForImage()
                 } else {
-                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, R.string.permission_denied, Toast.LENGTH_SHORT).show()
                 }
             }
             REQUEST_CODE_CAMERA -> {
@@ -213,7 +196,7 @@ class PostPublisherActivity : AppCompatActivity() {
                     // open Camera
                     openCameraForImage()
                 } else {
-                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, R.string.permission_denied, Toast.LENGTH_SHORT).show()
                 }
             }
             REQUEST_CODE_LOCATION -> {
@@ -221,9 +204,9 @@ class PostPublisherActivity : AppCompatActivity() {
                     PackageManager.PERMISSION_GRANTED
                 ) {
                     // update the last Localization
-                    lastLocation = getLastLocation()
+                    publishPostWhichFields()
                 } else {
-                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, R.string.permission_denied, Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -267,64 +250,89 @@ class PostPublisherActivity : AppCompatActivity() {
     }
 
     /**
-     * Requires location permit
+     * Check for empty mandatory fields
+     *
+     * Returns false if it finds an empty field and sends a message
      */
-    private fun startLocationPermissionRequest() {
-        ActivityCompat.requestPermissions(
-            this,
-            arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
-            REQUEST_CODE_LOCATION
-        )
-    }
-
-    /**
-     * Returns the current position.
-     * If you have not been able to get the position returns null and void.
-     */
-    private fun getLastLocation(): Location? {
-        var fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        var lastLocation: Location? = null
-        if (ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                this,
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
+    private fun checkEmptyFields(): Boolean {
+        if (editText_title.text.isNullOrEmpty() || textView_description.text.isNullOrEmpty() || editTextDate.text.isNullOrEmpty() || image.toString()
+                .isEmpty() || image == null || categorySelected == 0
         ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return null
-        }
-        fusedLocationClient!!.lastLocation
-            .addOnCompleteListener(this) { task ->
-                if (task.isSuccessful && task.result != null) {
-                    lastLocation = task.result
-                } else {
-                    Toast.makeText(this, R.string.no_location, Toast.LENGTH_SHORT).show()
-                }
-            }
-        return lastLocation
-    }
-
-    /**
-     * Upload the image to the server.
-     * In case it has had any errors it returns null.
-     */
-    private fun uploadImage(imagePath: Uri?): Uri? {
-        if (imagePath == null) {
             Toast.makeText(
-                this,
-                getString(R.string.empty_input_field),
+                baseContext, getString(R.string.empty_input_field),
                 Toast.LENGTH_SHORT
             ).show()
-            return null;
+            return false
         }
+        return true
+    }
+
+    /**
+     * Publish the post by getting the data from complicated fields
+     * Aggregate loading status with a Loading Activity
+     */
+    private fun publishPostWhichFields() {
+        // TODO: update Loading Activity: Loading in progress
+
+        if (checkEmptyFields()) {
+            // Gets current position
+            var fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+            if (ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return
+            }
+            fusedLocationClient!!.lastLocation
+                .addOnCompleteListener(this) { task ->
+                    if (task.isSuccessful && task.result != null) {
+                        // Publication through local image
+                        if (image != null) {
+                            publishPostWhichLocalImage(
+                                editText_title.text.toString(),
+                                editTextTextMultiLine_description.text.toString(),
+                                editTextDate.text.toString(),
+                                categorySelected,
+                                task.result!!,
+                                image!!
+                            )
+                        } else {
+                            // TODO: close Loading Activity
+                            Toast.makeText(this, R.string.image_upload_error, Toast.LENGTH_SHORT)
+                                .show()
+                        }
+                    } else {
+                        // TODO: close Loading Activity
+                        Toast.makeText(this, R.string.no_location, Toast.LENGTH_SHORT).show()
+                    }
+                }
+        }
+    }
+
+    /**
+     * Publish a post by uploading a local image
+     * Aggregate loading status with a Loading Activity
+     */
+    private fun publishPostWhichLocalImage(
+        title: String,
+        description: String,
+        date: String,
+        categorySelected: Int,
+        lastLocation: Location,
+        imagePath: Uri
+    ) {
+        // TODO: update Loading Activity: Upload Image
 
         // Generate the name file: "use id"_"random ID"
         val path =
@@ -334,7 +342,6 @@ class PostPublisherActivity : AppCompatActivity() {
         val url = path.putFile(imagePath)
 
         // Upload process management
-        var imageURL: Uri? = null
         url.continueWithTask { task ->
             if (!task.isSuccessful) {
                 task.exception?.let {
@@ -344,7 +351,17 @@ class PostPublisherActivity : AppCompatActivity() {
             path.downloadUrl
         }.addOnCompleteListener { task ->
             if (task.isSuccessful) {
-                imageURL = task.result
+                // Last step for publication
+                task.result?.let {
+                    publishPostWhichServerImage(
+                        title,
+                        description,
+                        date,
+                        categorySelected,
+                        lastLocation,
+                        it
+                    )
+                }
             } else {
                 Toast.makeText(
                     this,
@@ -353,6 +370,57 @@ class PostPublisherActivity : AppCompatActivity() {
                 ).show()
             }
         }
-        return imageURL
+    }
+
+    /**
+     * Publish the post
+     * Aggregate loading status with a Loading Activity
+     */
+    private fun publishPostWhichServerImage(
+        title: String,
+        description: String,
+        date: String,
+        categorySelected: Int,
+        lastLocation: Location,
+        image: Uri
+    ) {
+        // TODO: start Loading Activity: Loading in progress
+
+        // Check the parameters 
+        if (image.toString().isEmpty()) {
+            Toast.makeText(this, R.string.image_upload_error, Toast.LENGTH_SHORT).show()
+            return
+        }
+        if (title.isEmpty() || description.isEmpty() || editTextDate.text.isNullOrEmpty() || categorySelected == 0) {
+            Toast.makeText(
+                baseContext, getString(R.string.empty_input_field),
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+
+        // Create a list of data to upload
+        val data = hashMapOf(
+            "UserId" to auth.currentUser?.uid,
+            "Title" to title,
+            "Description" to description,
+            "Category" to categorySelected,
+            "Coordinates" to doubleArrayOf(lastLocation.latitude, lastLocation.longitude).toList(),
+            "ExpireDate" to date,
+            "PostedOn" to Calendar.getInstance().time,
+            "ImageUri" to image.toString(),
+            "Keywords" to title.toLowerCase(Locale.getDefault()).split(" ").toMutableList()
+        )
+
+        // Upload data
+        db.collection("available_items").document(UUID.randomUUID().toString())
+            .set(data as Map<*, *>)
+            .addOnSuccessListener {
+                onBackPressed()
+                Toast.makeText(this, R.string.loading_completed, Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener { exception ->
+                Toast.makeText(this, exception.localizedMessage, Toast.LENGTH_SHORT).show()
+            }
     }
 }

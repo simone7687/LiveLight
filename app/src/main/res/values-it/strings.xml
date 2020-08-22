@@ -11,13 +11,16 @@
     <string name="image_upload">Carica un\'immagine</string>
     <string name="take_photo">Scatta una foto</string>
     <string name="publish">Pubblica</string>
-    <!-- Warning -->
+    <!-- Warning && Errors -->
     <string name="empty_input_field">Hai dimenticato alcuni campi</string>
     <string name="invalid_email">Devi inserire un indirizzo email valido</string>
     <string name="different_passwords">Hai inserito password diverse</string>
     <string name="weak_password">La password è troppo debole</string>
     <string name="unauthorized_data_processing">Devi accettare il trattamento deti per continuare</string>
     <string name="no_location">Non è possibile ottenere la posizione</string>
+    <string name="image_upload_error">Si è verificato un errore durante il caricamento dell\'immagine.</string>
+    <string name="permission_denied">Permesso negato</string>
+    <string name="loading_completed">Caricamento Completato</string>
     <!-- Login & Registration -->
     <string name="login">Accedi</string>
     <string name="not_registered">Non sei ancora registrato?</string>

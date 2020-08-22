@@ -29,7 +29,6 @@
             android:layout_marginBottom="@dimen/element_margin"
             android:hint="@string/title"
             android:inputType="textPersonName"
-            android:padding="15dp"
             android:textSize="15sp" />
 
         <EditText
