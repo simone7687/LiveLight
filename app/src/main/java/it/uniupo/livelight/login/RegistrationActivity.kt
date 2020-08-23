@@ -169,12 +169,13 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
         )
             .addOnSuccessListener(this) {
                 val user_details_data = hashMapOf(
-                    "Name" to name,
-                    "Surname" to surname,
-                    "City" to city,
-                    "Address" to address
+                    getString(R.string.db__name) to name,
+                    getString(R.string.db__surname) to surname,
+                    getString(R.string.db__city) to city,
+                    getString(R.string.db__address) to address
                 )
-                db.collection("user_details").document(auth.currentUser?.uid.toString())
+                db.collection(getString(R.string.db_user_details))
+                    .document(auth.currentUser?.uid.toString())
                     .set(user_details_data as Map<String, Any>)
                     .addOnSuccessListener {
                         val intentMain = Intent(this, MainActivity::class.java)

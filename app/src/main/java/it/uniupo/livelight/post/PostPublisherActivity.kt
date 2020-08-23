@@ -44,7 +44,7 @@ class PostPublisherActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_post_publisher)
 
-        loadCategoriesSpinner(Locale.getDefault().language)
+        loadCategoriesSpinner()
 
         button_image.setOnClickListener {
             // Check permissions
@@ -115,10 +115,10 @@ class PostPublisherActivity : AppCompatActivity() {
     }
 
     /**
-     * Load the categories from the database in the appropriate language per parameter
+     * Load the categories from the database in the appropriate language
      * and then enter them in the appropriate Spinner
      */
-    private fun loadCategoriesSpinner(localeLanguage: String) {
+    private fun loadCategoriesSpinner() {
         val categoriesSpinner = findViewById<Spinner>(R.id.spinner_categories)
         val categories = ArrayList<String>()
 
@@ -126,14 +126,14 @@ class PostPublisherActivity : AppCompatActivity() {
         categories.add(getString(R.string.category_selection))
 
         // Load the categories from the database
-        db.collection("categories").get().addOnCompleteListener { task ->
+        db.collection(getString(R.string.db_categories)).get().addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 // If the category in the Italian language is null then insert the category in English
                 for (item in task.result!!.documents)
                     categories.add(
-                        when (val v = item.getString("name_$localeLanguage")) {
+                        when (val v = item.getString(getString(R.string.db_categories_name))) {
                             null -> {
-                                item.getString("name_en").toString()
+                                item.getString(getString(R.string.db_categories_name_en)).toString()
                             }
                             else -> {
                                 v.toString()
@@ -146,8 +146,6 @@ class PostPublisherActivity : AppCompatActivity() {
                 categoriesSpinner.adapter = adapter
             }
         }.addOnFailureListener { exception ->
-            // Try again in English
-            loadCategoriesSpinner("en")
             Toast.makeText(
                 baseContext, exception.localizedMessage,
                 Toast.LENGTH_SHORT
@@ -336,7 +334,7 @@ class PostPublisherActivity : AppCompatActivity() {
 
         // Generate the name file: "use id"_"random ID"
         val path =
-            storage.reference.child("uploaded_images/${auth.currentUser!!.uid + "_" + UUID.randomUUID()}")
+            storage.reference.child(getString(R.string.storage_folder_post_images) + auth.currentUser!!.uid + "_" + UUID.randomUUID())
 
         // Given image ulr path
         val url = path.putFile(imagePath)
@@ -401,19 +399,23 @@ class PostPublisherActivity : AppCompatActivity() {
 
         // Create a list of data to upload
         val data = hashMapOf(
-            "UserId" to auth.currentUser?.uid,
-            "Title" to title,
-            "Description" to description,
-            "Category" to categorySelected,
-            "Coordinates" to doubleArrayOf(lastLocation.latitude, lastLocation.longitude).toList(),
-            "ExpireDate" to date,
-            "PostedOn" to Calendar.getInstance().time,
-            "ImageUri" to image.toString(),
-            "Keywords" to title.toLowerCase(Locale.getDefault()).split(" ").toMutableList()
+            getString(R.string.db__userId) to auth.currentUser?.uid,
+            getString(R.string.db__title) to title,
+            getString(R.string.db__description) to description,
+            getString(R.string.db__category) to categorySelected,
+            getString(R.string.db__coordinates) to doubleArrayOf(
+                lastLocation.latitude,
+                lastLocation.longitude
+            ).toList(),
+            getString(R.string.db__dateExpire) to date,
+            getString(R.string.db__datePosted) to Calendar.getInstance().time,
+            getString(R.string.db__imageUrl) to image.toString(),
+            getString(R.string.db__keywords) to title.toLowerCase(Locale.getDefault()).split(" ")
+                .toMutableList()
         )
 
         // Upload data
-        db.collection("available_items").document(UUID.randomUUID().toString())
+        db.collection(getString(R.string.db_post)).document(UUID.randomUUID().toString())
             .set(data as Map<*, *>)
             .addOnSuccessListener {
                 onBackPressed()

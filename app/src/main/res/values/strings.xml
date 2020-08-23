@@ -1,16 +1,26 @@
 <resources>
-    <string name="app_name" translatable="false">Live Light</string>
-    <string name="join_description">Let\'s join us\nShare items you don\'t use</string>
-    <string name="close">Close</string>
-    <string name="city">City</string>
-    <string name="address">Address</string>
-    <string name="title">Title</string>
-    <string name="description">Description</string>
-    <string name="available_until_date">Available until</string>
-    <string name="category_selection">Select a category</string>
-    <string name="image_upload">Upload image</string>
-    <string name="take_photo">Take a photo</string>
-    <string name="publish">Publish</string>
+    <!-- DataBase -->
+    <string name="db_categories" translatable="false">categories</string>
+    <string name="db_categories_name">name_en</string>
+    <string name="db_categories_name_en" translatable="false">name_en</string>
+    <string name="db_post" translatable="false">available_items</string>
+    <string name="db_user_details" translatable="false">user_details</string>
+    <!-- DataBase Field -->
+    <string name="db__userId" translatable="false">UserId</string>
+    <string name="db__title" translatable="false">Title</string>
+    <string name="db__description" translatable="false">Description</string>
+    <string name="db__category" translatable="false">Category</string>
+    <string name="db__coordinates" translatable="false">Coordinates</string>
+    <string name="db__dateExpire" translatable="false">ExpireDate</string>
+    <string name="db__datePosted" translatable="false">PostedOn</string>
+    <string name="db__imageUrl" translatable="false">ImageUri</string>
+    <string name="db__keywords" translatable="false">Keywords</string>
+    <string name="db__name" translatable="false">Name</string>
+    <string name="db__surname" translatable="false">Surname</string>
+    <string name="db__city" translatable="false">City</string>
+    <string name="db__address" translatable="false">Address</string>
+    <!-- Storage -->
+    <string name="storage_folder_post_images" translatable="false">uploaded_images/</string>
     <!-- Warning && Errors -->
     <string name="empty_input_field">You forgot some fields</string>
     <string name="invalid_email">You must enter a valid email</string>
@@ -45,4 +55,17 @@
     <!-- Post Publisher -->
     <string name="new_post">New Post</string>
     <string name="publish_post_description">Publish a new post</string>
+    <!-- Other -->
+    <string name="app_name" translatable="false">Live Light</string>
+    <string name="join_description">Let\'s join us\nShare items you don\'t use</string>
+    <string name="close">Close</string>
+    <string name="city">City</string>
+    <string name="address">Address</string>
+    <string name="title">Title</string>
+    <string name="description">Description</string>
+    <string name="available_until_date">Available until</string>
+    <string name="category_selection">Select a category</string>
+    <string name="image_upload">Upload image</string>
+    <string name="take_photo">Take a photo</string>
+    <string name="publish">Publish</string>
 </resources>

@@ -1,16 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="join_description">Unisciti a noi\nCondividi gli oggetti che non utilizzi</string>
-    <string name="close">Chiudi</string>
-    <string name="city">Città</string>
-    <string name="address">Indirizzo</string>
-    <string name="title">Titolo</string>
-    <string name="description">Descrizione</string>
-    <string name="available_until_date">Disponibile fino</string>
-    <string name="category_selection">Seleziona una categoria</string>
-    <string name="image_upload">Carica un\'immagine</string>
-    <string name="take_photo">Scatta una foto</string>
-    <string name="publish">Pubblica</string>
+    <!-- DataBase -->
+    <string name="db_categories_name">name_it</string>
     <!-- Warning && Errors -->
     <string name="empty_input_field">Hai dimenticato alcuni campi</string>
     <string name="invalid_email">Devi inserire un indirizzo email valido</string>
@@ -44,4 +35,16 @@
     <!-- Post Publisher -->
     <string name="new_post">Nuovo post</string>
     <string name="publish_post_description">Pubblica un nuvo post</string>
+    <!-- Other -->
+    <string name="join_description">Unisciti a noi\nCondividi gli oggetti che non utilizzi</string>
+    <string name="close">Chiudi</string>
+    <string name="city">Città</string>
+    <string name="address">Indirizzo</string>
+    <string name="title">Titolo</string>
+    <string name="description">Descrizione</string>
+    <string name="available_until_date">Disponibile fino</string>
+    <string name="category_selection">Seleziona una categoria</string>
+    <string name="image_upload">Carica un\'immagine</string>
+    <string name="take_photo">Scatta una foto</string>
+    <string name="publish">Pubblica</string>
 </resources>
