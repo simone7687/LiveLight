@@ -4,5 +4,5 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="element_margin">10dp</dimen>
     <!-- Floating Action Button -->
-    <dimen name="fab_margin">60dp</dimen>
+    <dimen name="fab_margin">10dp</dimen>
 </resources>
