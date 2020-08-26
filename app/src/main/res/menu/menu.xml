@@ -1,12 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/navigation_settings"
+        android:id="@+id/item_map"
+        android:title="@string/map"
+        android:icon="@drawable/ic_outline_location_on_24"
+        app:showAsAction="ifRoom"
+        android:visible="false" />
+
+    <item
+        android:id="@+id/item_search"
+        android:title="@string/search"
+        android:icon="@drawable/ic_twotone_search_24"
+        app:showAsAction="ifRoom"
+        android:visible="false" />
+
+    <item
+        android:id="@+id/item_settings"
         android:title="@string/settings" />
 
     <item
-        android:id="@+id/navigation_logout"
+        android:id="@+id/item_logout"
         android:title="@string/logout" />
 
 </menu>

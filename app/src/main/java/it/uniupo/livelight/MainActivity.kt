@@ -19,6 +19,7 @@ import it.uniupo.livelight.post.PostPublisherActivity
  * MainActivity is the primary and main activity that allows navigation in Fragments
  */
 class MainActivity : AppCompatActivity() {
+    var myMenu: Menu? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,6 +62,14 @@ class MainActivity : AppCompatActivity() {
             } else {
                 findViewById<FloatingActionButton>(R.id.fab)?.show()
             }
+            // hide Search and Location Item
+            if (destination.id in arrayOf(R.id.navigation_search)) {
+                myMenu?.findItem(R.id.item_map)?.setVisible(true)
+                myMenu?.findItem(R.id.item_search)?.setVisible(true)
+            } else {
+                myMenu?.findItem(R.id.item_map)?.setVisible(false)
+                myMenu?.findItem(R.id.item_search)?.setVisible(false)
+            }
         }
     }
 
@@ -69,16 +78,17 @@ class MainActivity : AppCompatActivity() {
      */
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu, menu)
+        myMenu = menu
         return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.navigation_settings -> {
+            R.id.item_settings -> {
                 val intentSettings = Intent(this, SettingsActivity::class.java)
                 startActivity(intentSettings)
             }
-            R.id.navigation_logout -> {
+            R.id.item_logout -> {
                 logout()
             }
         }
