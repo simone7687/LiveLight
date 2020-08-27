@@ -1,5 +1,6 @@
 package it.uniupo.livelight.post
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +20,7 @@ class PostListAdapter(
     private val image: ArrayList<String>
 ) : ArrayAdapter<String>(context, R.layout.list_post, title) {
 
+    @SuppressLint("ViewHolder", "InflateParams")
     override fun getView(position: Int, view: View?, parent: ViewGroup): View {
         val inflater = context.layoutInflater
         val rowView = inflater.inflate(R.layout.list_post, null, true)

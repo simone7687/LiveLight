@@ -53,8 +53,13 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                     ).show()
                     return
                 }
+
+                // TODO: start Loading Activity
+
                 // authentication with email and password
                 login(editText_email.text.toString(), editText_password.text.toString())
+
+                // TODO: close Loading Activity
             }
             R.id.button_registration -> {
                 // navigate to RegistrationActivity

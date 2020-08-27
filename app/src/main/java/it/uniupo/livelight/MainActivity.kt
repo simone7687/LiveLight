@@ -19,11 +19,13 @@ import it.uniupo.livelight.post.PostPublisherActivity
  * MainActivity is the primary and main activity that allows navigation in Fragments
  */
 class MainActivity : AppCompatActivity() {
-    var myMenu: Menu? = null
+    private var myMenu: Menu? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // TODO: if there is no connection shows a message 
 
         // check if you have already logged in. if not, navigate to LoginActivity
         if (FirebaseAuth.getInstance().currentUser == null) {
@@ -50,6 +52,7 @@ class MainActivity : AppCompatActivity() {
 
         // Handle Floating Action Button
         findViewById<FloatingActionButton>(R.id.fab)?.setOnClickListener {
+            // TODO: If there is no connection it does not open the activity 
             val intent = Intent(this, PostPublisherActivity()::class.java)
             startActivity(intent)
         }
@@ -64,11 +67,11 @@ class MainActivity : AppCompatActivity() {
             }
             // hide Search and Location Item
             if (destination.id in arrayOf(R.id.navigation_search)) {
-                myMenu?.findItem(R.id.item_map)?.setVisible(true)
-                myMenu?.findItem(R.id.item_search)?.setVisible(true)
+                myMenu?.findItem(R.id.item_map)?.isVisible = true
+                myMenu?.findItem(R.id.item_search)?.isVisible = true
             } else {
-                myMenu?.findItem(R.id.item_map)?.setVisible(false)
-                myMenu?.findItem(R.id.item_search)?.setVisible(false)
+                myMenu?.findItem(R.id.item_map)?.isVisible = false
+                myMenu?.findItem(R.id.item_search)?.isVisible = false
             }
         }
     }

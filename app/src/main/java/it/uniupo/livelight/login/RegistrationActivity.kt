@@ -19,7 +19,7 @@ import java.util.regex.Pattern
 class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
 
     private lateinit var auth: FirebaseAuth
-    private val db = FirebaseFirestore.getInstance()
+    private lateinit var db: FirebaseFirestore
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,6 +27,8 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
 
         // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
+        // Initialize Firebase Firestore
+        db = FirebaseFirestore.getInstance()
 
         // Back button
         val actionBar = supportActionBar
@@ -168,15 +170,17 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
             password
         )
             .addOnSuccessListener(this) {
-                val user_details_data = hashMapOf(
+                // User data
+                val userDetailsData = hashMapOf(
                     getString(R.string.db__name) to name,
                     getString(R.string.db__surname) to surname,
                     getString(R.string.db__city) to city,
                     getString(R.string.db__address) to address
                 )
+                // Enters the user's data into the database and logs in
                 db.collection(getString(R.string.db_user_details))
                     .document(auth.currentUser?.uid.toString())
-                    .set(user_details_data as Map<String, Any>)
+                    .set(userDetailsData as Map<String, Any>)
                     .addOnSuccessListener {
                         val intentMain = Intent(this, MainActivity::class.java)
                         startActivity(intentMain)
