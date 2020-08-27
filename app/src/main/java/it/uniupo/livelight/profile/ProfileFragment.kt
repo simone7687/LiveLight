@@ -17,7 +17,7 @@ import it.uniupo.livelight.post.PostListAdapter
 import it.uniupo.livelight.post.PostModel
 
 /**
- * ProfileFragment is a fragment used the status of the user, his posts and publish new content
+ * ProfileFragment is a fragment used to display the user's status, his posts and publish new content
  */
 class ProfileFragment : Fragment() {
     private lateinit var auth: FirebaseAuth

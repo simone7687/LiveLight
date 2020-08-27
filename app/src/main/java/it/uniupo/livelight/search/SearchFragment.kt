@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.Fragment
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
 import it.uniupo.livelight.R
 import it.uniupo.livelight.post.PostListAdapter
 import it.uniupo.livelight.post.PostModel
@@ -21,15 +22,18 @@ import kotlinx.android.synthetic.main.fragment_search.view.*
 import java.util.*
 import kotlin.collections.ArrayList
 
+/**
+ * ProfileFragment is a snippet used to search for Post
+ */
 class SearchFragment : Fragment() {
     private val db = FirebaseFirestore.getInstance()
 
     private val REQUEST_CODE_LOCATION = 300
 
     private var distanceSelected: Int = 0
-    var lastLocation: Location? = null
+    private var lastLocation: Location? = null
     private lateinit var list: ListView
-    var search_text: String? = null
+    private var search_text: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -109,63 +113,20 @@ class SearchFragment : Fragment() {
     /**
      * Updates the list of posts according to the selected position
      */
-    private fun updatePostList(postList: ListView, distanceSelected: Int, lastLocation: Location?) {
+    private fun updatePostList(
+        postList: ListView,
+        distanceSelected: Int,
+        lastLocation: Location?
+    ) {
         db.collection(getString(R.string.db_post)).get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    // for PostListAdapter
-                    val titlePost: ArrayList<String> = ArrayList()
-                    val descriptionPost: ArrayList<String> = ArrayList()
-                    val imagePost: ArrayList<String> = ArrayList()
-
-                    loop@ for (item in task.result!!.documents) {
-                        val model = PostModel(item.id)
-                        model.user = item.get(getString(R.string.db__userId)) as String
-                        model.title = item.get(getString(R.string.db__title)) as String
-                        model.description = item.get(getString(R.string.db__description)) as String
-                        model.image = item.get(getString(R.string.db__imageUrl)) as String
-                        model.coordinates =
-                            item.get(getString(R.string.db__coordinates)) as ArrayList<Double>
-
-                        // Find only posts of the selected distance
-                        if (distanceSelected != 0 && lastLocation != null) {
-                            val itemLoc = Location("")
-                            itemLoc.latitude = model.coordinates[0]
-                            itemLoc.longitude = model.coordinates[1]
-
-                            when (distanceSelected) {
-                                //10km
-                                1 -> {
-                                    if (lastLocation.distanceTo(itemLoc) > 10000)
-                                        continue@loop
-                                }
-                                //20km
-                                2 -> {
-                                    if (lastLocation.distanceTo(itemLoc) > 20000)
-                                        continue@loop
-                                }
-                                //50km
-                                3 -> {
-                                    if (lastLocation.distanceTo(itemLoc) > 50000)
-                                        continue@loop
-                                }
-                            }
-                        }
-
-                        // for PostListAdapter
-                        titlePost.add(model.title)
-                        descriptionPost.add(model.description)
-                        imagePost.add(model.image)
-                    }
-
-                    // Update the list of posts
-                    postList.adapter =
-                        PostListAdapter(
-                            this.requireActivity(),
-                            titlePost,
-                            descriptionPost,
-                            imagePost
-                        )
+                    updatePostListDistance(
+                        postList,
+                        task.result,
+                        distanceSelected,
+                        lastLocation
+                    )
                 }
             }.addOnFailureListener { exception ->
                 Toast.makeText(
@@ -196,59 +157,12 @@ class SearchFragment : Fragment() {
         ).get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    // for PostListAdapter
-                    val titlePost: ArrayList<String> = ArrayList()
-                    val descriptionPost: ArrayList<String> = ArrayList()
-                    val imagePost: ArrayList<String> = ArrayList()
-
-                    loop@ for (item in task.result!!.documents) {
-                        val model = PostModel(item.id)
-                        model.user = item.get(getString(R.string.db__userId)) as String
-                        model.title = item.get(getString(R.string.db__title)) as String
-                        model.description = item.get(getString(R.string.db__description)) as String
-                        model.image = item.get(getString(R.string.db__imageUrl)) as String
-                        model.coordinates =
-                            item.get(getString(R.string.db__coordinates)) as ArrayList<Double>
-
-                        // Find only posts of the selected distance
-                        if (distanceSelected != 0 && lastLocation != null) {
-                            val itemLoc = Location("")
-                            itemLoc.latitude = model.coordinates[0]
-                            itemLoc.longitude = model.coordinates[1]
-
-                            when (distanceSelected) {
-                                //10km
-                                1 -> {
-                                    if (lastLocation.distanceTo(itemLoc) > 10000)
-                                        continue@loop
-                                }
-                                //20km
-                                2 -> {
-                                    if (lastLocation.distanceTo(itemLoc) > 20000)
-                                        continue@loop
-                                }
-                                //50km
-                                3 -> {
-                                    if (lastLocation.distanceTo(itemLoc) > 50000)
-                                        continue@loop
-                                }
-                            }
-                        }
-
-                        // for PostListAdapter
-                        titlePost.add(model.title)
-                        descriptionPost.add(model.description)
-                        imagePost.add(model.image)
-                    }
-
-                    // Update the list of posts
-                    postList.adapter =
-                        PostListAdapter(
-                            this.requireActivity(),
-                            titlePost,
-                            descriptionPost,
-                            imagePost
-                        )
+                    updatePostListDistance(
+                        postList,
+                        task.result,
+                        distanceSelected,
+                        lastLocation
+                    )
                 }
             }.addOnFailureListener { exception ->
                 Toast.makeText(
@@ -256,5 +170,69 @@ class SearchFragment : Fragment() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
+    }
+
+    /**
+     * Function used in updatePostList
+     */
+    private fun updatePostListDistance(
+        postList: ListView,
+        result: QuerySnapshot?,
+        distanceSelected: Int,
+        lastLocation: Location?
+    ) {
+        // for PostListAdapter
+        val titlePost: ArrayList<String> = ArrayList()
+        val descriptionPost: ArrayList<String> = ArrayList()
+        val imagePost: ArrayList<String> = ArrayList()
+
+        loop@ for (item in result!!.documents) {
+            val model = PostModel(item.id)
+            model.user = item.get(getString(R.string.db__userId)) as String
+            model.title = item.get(getString(R.string.db__title)) as String
+            model.description = item.get(getString(R.string.db__description)) as String
+            model.image = item.get(getString(R.string.db__imageUrl)) as String
+            model.coordinates =
+                item.get(getString(R.string.db__coordinates)) as ArrayList<Double>
+
+            // Find only posts of the selected distance
+            if (distanceSelected != 0 && lastLocation != null) {
+                val itemLoc = Location("")
+                itemLoc.latitude = model.coordinates[0]
+                itemLoc.longitude = model.coordinates[1]
+
+                when (distanceSelected) {
+                    //10km
+                    1 -> {
+                        if (lastLocation.distanceTo(itemLoc) > 10000)
+                            continue@loop
+                    }
+                    //20km
+                    2 -> {
+                        if (lastLocation.distanceTo(itemLoc) > 20000)
+                            continue@loop
+                    }
+                    //50km
+                    3 -> {
+                        if (lastLocation.distanceTo(itemLoc) > 50000)
+                            continue@loop
+                    }
+                }
+            }
+
+            // for PostListAdapter
+            titlePost.add(model.title)
+            descriptionPost.add(model.description)
+            imagePost.add(model.image)
+        }
+
+        // Update the list of posts
+        postList.adapter =
+            PostListAdapter(
+                this.requireActivity(),
+                titlePost,
+                descriptionPost,
+                imagePost
+            )
     }
 }
