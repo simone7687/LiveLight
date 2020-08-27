@@ -15,6 +15,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
+            android:name=".search.MapActivity"
+            android:label="@string/map" />
+        <activity
             android:name=".SettingsActivity"
             android:label="@string/settings" />
         <activity

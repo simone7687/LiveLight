@@ -1,6 +1,7 @@
 package it.uniupo.livelight.search
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
@@ -108,6 +109,14 @@ class SearchFragment : Fragment() {
                 lastLocation,
                 search_text
             )
+    }
+
+    /**
+     * Open MapActivity
+     */
+    private fun openMap() {
+        val intent = Intent(activity, MapActivity::class.java)
+        startActivity(intent)
     }
 
     /**
