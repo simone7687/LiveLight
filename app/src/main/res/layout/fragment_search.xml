@@ -3,7 +3,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".search.SearchFragment"
     android:orientation="vertical">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <com.mancj.materialsearchbar.MaterialSearchBar
+            android:id="@+id/searchBar"
+            android:layout_height="70dp"
+            android:layout_width="match_parent"
+            app:theme="@style/AppTheme.PopupOverlay"
+            app:mt_maxSuggestionsCount="0"
+            app:mt_hint="@string/search"
+            app:mt_placeholder="@string/search"
+            app:mt_navIconEnabled="true"
+            app:mt_navIconDrawable="@drawable/ic_baseline_location_on_24" />
+    </LinearLayout>
 </RelativeLayout>

@@ -2,11 +2,11 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/navigation_settings"
+        android:id="@+id/item_settings"
         android:title="@string/settings" />
 
     <item
-        android:id="@+id/navigation_logout"
+        android:id="@+id/item_logout"
         android:title="@string/logout" />
 
 </menu>

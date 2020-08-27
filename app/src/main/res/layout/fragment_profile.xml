@@ -34,7 +34,7 @@
             android:background="?android:attr/listDivider" />
 
         <ListView
-            android:id="@+id/list_post"
+            android:id="@+id/list_user_post"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:smoothScrollbar="true" />

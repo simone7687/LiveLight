@@ -74,11 +74,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.navigation_settings -> {
+            R.id.item_settings -> {
                 val intentSettings = Intent(this, SettingsActivity::class.java)
                 startActivity(intentSettings)
             }
-            R.id.navigation_logout -> {
+            R.id.item_logout -> {
                 logout()
             }
         }
