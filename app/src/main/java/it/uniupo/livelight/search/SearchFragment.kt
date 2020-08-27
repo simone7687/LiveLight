@@ -14,6 +14,7 @@ import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.Fragment
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.firestore.FirebaseFirestore
+import com.mancj.materialsearchbar.MaterialSearchBar
 import it.uniupo.livelight.R
 import it.uniupo.livelight.post.PostListAdapter
 import it.uniupo.livelight.post.PostModel
@@ -21,7 +22,7 @@ import kotlinx.android.synthetic.main.fragment_search.view.*
 import java.util.*
 import kotlin.collections.ArrayList
 
-class SearchFragment : Fragment() {
+class SearchFragment : Fragment(), MaterialSearchBar.OnSearchActionListener {
     private val db = FirebaseFirestore.getInstance()
 
     private val REQUEST_CODE_LOCATION = 300
@@ -52,9 +53,22 @@ class SearchFragment : Fragment() {
 
         }
 
+        // MaterialSearchBar
+        root.searchBar.setOnSearchActionListener(this)
+
         updatePostList(root.findViewById(R.id.list_post), distanceSelected, lastLocation)
 
         return root
+    }
+
+    override fun onSearchStateChanged(enabled: Boolean) {}
+
+    override fun onSearchConfirmed(text: CharSequence) {
+        search_text = text.toString()
+        updatePostList(list, distanceSelected, lastLocation, search_text)
+    }
+
+    override fun onButtonClicked(buttonCode: Int) {
     }
 
     /**
