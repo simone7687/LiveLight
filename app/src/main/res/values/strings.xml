@@ -50,6 +50,13 @@
     <!-- Main profile -->
     <string name="profile">Profile</string>
     <string name="profile_description">Here are the posts you posted.</string>
+    <string name="any_distance">Any distances</string>
+    <string-array name="distances">
+        <item>@string/any_distance</item>
+        <item>10 km</item>
+        <item>20 km</item>
+        <item>50 km</item>
+    </string-array>
     <!-- Settings -->
     <string name="settings">Settings</string>
     <!-- Post Publisher -->

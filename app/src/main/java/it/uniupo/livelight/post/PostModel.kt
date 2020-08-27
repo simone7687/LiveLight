@@ -6,4 +6,5 @@ data class PostModel(val id: String) {
     lateinit var description: String
     lateinit var datePosted: String
     lateinit var image: String
+    lateinit var coordinates: ArrayList<Double>
 }

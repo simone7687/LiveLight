@@ -20,8 +20,8 @@ import it.uniupo.livelight.post.PostModel
  * ProfileFragment is a fragment used the status of the user, his posts and publish new content
  */
 class ProfileFragment : Fragment() {
-    private val db = FirebaseFirestore.getInstance()
-    private val auth = FirebaseAuth.getInstance()
+    private lateinit var auth: FirebaseAuth
+    private lateinit var db: FirebaseFirestore
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,10 +30,15 @@ class ProfileFragment : Fragment() {
     ): View? {
         val root = inflater.inflate(R.layout.fragment_profile, container, false)
 
+        // Initialize Firebase Auth
+        auth = FirebaseAuth.getInstance()
+        // Initialize Firebase Firestore
+        db = FirebaseFirestore.getInstance()
+
         // Upload profle data
         updateUserDescription(root.findViewById(R.id.textView_description))
         updateUserPostList(
-            root.findViewById(R.id.list_post)!!,
+            root.findViewById(R.id.list_user_post)!!,
             root.findViewById(R.id.textView_posts_posted)
         )
 
@@ -77,6 +82,12 @@ class ProfileFragment : Fragment() {
                     val imagePost: ArrayList<String> = ArrayList()
 
                     for (item in task.result!!.documents) {
+                        val model = PostModel(item.id)
+                        model.user = item.get(getString(R.string.db__userId)) as String
+                        model.title = item.get(getString(R.string.db__title)) as String
+                        model.description = item.get(getString(R.string.db__description)) as String
+                        model.image = item.get(getString(R.string.db__imageUrl)) as String
+
                         // for PostListAdapter
                         titlePost.add(model.title)
                         descriptionPost.add(model.description)

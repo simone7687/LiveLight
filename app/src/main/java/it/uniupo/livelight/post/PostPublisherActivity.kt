@@ -1,6 +1,7 @@
 package it.uniupo.livelight.post
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -29,20 +30,27 @@ import kotlin.collections.ArrayList
  * Activity to publish a new post
  */
 class PostPublisherActivity : AppCompatActivity() {
-    private val db = FirebaseFirestore.getInstance()
-    private val auth = FirebaseAuth.getInstance()
-    private val storage = FirebaseStorage.getInstance()
+    private lateinit var auth: FirebaseAuth
+    private lateinit var db: FirebaseFirestore
+    private lateinit var storage: FirebaseStorage
 
     private val REQUEST_CODE_GALLERY = 100
     private val REQUEST_CODE_CAMERA = 200
     private val REQUEST_CODE_LOCATION = 300
 
-    private var image: Uri? = null
+    private lateinit var image: Uri
     private var categorySelected: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_post_publisher)
+
+        // Initialize Firebase Auth
+        auth = FirebaseAuth.getInstance()
+        // Initialize Firebase Firestore
+        db = FirebaseFirestore.getInstance()
+        // Initialize Firebase Storage
+        storage = FirebaseStorage.getInstance()
 
         loadCategoriesSpinner()
 
@@ -210,13 +218,14 @@ class PostPublisherActivity : AppCompatActivity() {
         }
     }
 
+    // Manages permit requests
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_GALLERY && data != null) {
             // Inserts the image and makes it visible
             image_view.setImageURI(data.data)
             image_view.visibility = View.VISIBLE
-            image = data.data
+            image = data.data!!
         }
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_CAMERA && data != null) {
             image_view.setImageBitmap(data.extras?.get("data") as Bitmap)
@@ -227,6 +236,7 @@ class PostPublisherActivity : AppCompatActivity() {
     /**
      * Open Date Picker Dialog to select the day
      */
+    @SuppressLint("SetTextI18n")
     private fun openDatePickerDialog() {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
@@ -254,7 +264,7 @@ class PostPublisherActivity : AppCompatActivity() {
      */
     private fun checkEmptyFields(): Boolean {
         if (editText_title.text.isNullOrEmpty() || textView_description.text.isNullOrEmpty() || editTextDate.text.isNullOrEmpty() || image.toString()
-                .isEmpty() || image == null || categorySelected == 0
+                .isEmpty() || categorySelected == 0
         ) {
             Toast.makeText(
                 baseContext, getString(R.string.empty_input_field),
@@ -274,7 +284,7 @@ class PostPublisherActivity : AppCompatActivity() {
 
         if (checkEmptyFields()) {
             // Gets current position
-            var fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+            val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
             if (ActivityCompat.checkSelfPermission(
                     this,
                     Manifest.permission.ACCESS_FINE_LOCATION
@@ -296,20 +306,14 @@ class PostPublisherActivity : AppCompatActivity() {
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful && task.result != null) {
                         // Publication through local image
-                        if (image != null) {
-                            publishPostWhichLocalImage(
-                                editText_title.text.toString(),
-                                editTextTextMultiLine_description.text.toString(),
-                                editTextDate.text.toString(),
-                                categorySelected,
-                                task.result!!,
-                                image!!
-                            )
-                        } else {
-                            // TODO: close Loading Activity
-                            Toast.makeText(this, R.string.image_upload_error, Toast.LENGTH_SHORT)
-                                .show()
-                        }
+                        publishPostWhichLocalImage(
+                            editText_title.text.toString(),
+                            editTextTextMultiLine_description.text.toString(),
+                            editTextDate.text.toString(),
+                            categorySelected,
+                            task.result!!,
+                            image
+                        )
                     } else {
                         // TODO: close Loading Activity
                         Toast.makeText(this, R.string.no_location, Toast.LENGTH_SHORT).show()
@@ -330,6 +334,8 @@ class PostPublisherActivity : AppCompatActivity() {
         lastLocation: Location,
         imagePath: Uri
     ) {
+        // TODO: Check if it is an image
+
         // TODO: update Loading Activity: Upload Image
 
         // Generate the name file: "use id"_"random ID"

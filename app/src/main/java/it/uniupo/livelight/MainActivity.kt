@@ -24,6 +24,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        // TODO: if there is no connection shows a message 
+
         // check if you have already logged in. if not, navigate to LoginActivity
         if (FirebaseAuth.getInstance().currentUser == null) {
             val intentLogin = Intent(this, LoginActivity::class.java)
@@ -49,6 +51,7 @@ class MainActivity : AppCompatActivity() {
 
         // Handle Floating Action Button
         findViewById<FloatingActionButton>(R.id.fab)?.setOnClickListener {
+            // TODO: If there is no connection it does not open the activity 
             val intent = Intent(this, PostPublisherActivity()::class.java)
             startActivity(intent)
         }

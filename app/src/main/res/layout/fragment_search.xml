@@ -22,5 +22,18 @@
             app:mt_placeholder="@string/search"
             app:mt_navIconEnabled="true"
             app:mt_navIconDrawable="@drawable/ic_baseline_location_on_24" />
+
+        <Spinner
+            android:id="@+id/spinner_distance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:entries="@array/distances"
+            tools:ignore="HardcodedText"
+            android:layout_marginBottom="@dimen/element_margin" />
+
+        <ListView
+            android:id="@+id/list_post"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
     </LinearLayout>
 </RelativeLayout>

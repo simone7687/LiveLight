@@ -3,6 +3,8 @@ package it.uniupo.livelight.login
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
+import android.text.method.HideReturnsTransformationMethod
+import android.text.method.PasswordTransformationMethod
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -53,8 +55,13 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                     ).show()
                     return
                 }
+
+                // TODO: start Loading Activity
+
                 // authentication with email and password
                 login(editText_email.text.toString(), editText_password.text.toString())
+
+                // TODO: close Loading Activity
             }
             R.id.button_registration -> {
                 // navigate to RegistrationActivity
@@ -82,5 +89,21 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                     Toast.LENGTH_SHORT
                 ).show()
             }
+    }
+
+    /**
+     * Show Password and Hide Password
+     */
+    fun showHidePass(view: View) {
+        if (view.getId() == R.id.show_pass_btn) {
+            if (editText_password.getTransformationMethod() == PasswordTransformationMethod.getInstance()
+            ) {
+                // Show Password
+                editText_password.setTransformationMethod(HideReturnsTransformationMethod.getInstance());
+            } else {
+                // Hide Password
+                editText_password.setTransformationMethod(PasswordTransformationMethod.getInstance());
+            }
+        }
     }
 }

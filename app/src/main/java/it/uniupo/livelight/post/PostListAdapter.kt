@@ -1,12 +1,15 @@
 package it.uniupo.livelight.post
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
-import com.squareup.picasso.Picasso
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import it.uniupo.livelight.R
 
 /**
@@ -19,6 +22,7 @@ class PostListAdapter(
     private val image: ArrayList<String>
 ) : ArrayAdapter<String>(context, R.layout.list_post, title) {
 
+    @SuppressLint("ViewHolder", "InflateParams")
     override fun getView(position: Int, view: View?, parent: ViewGroup): View {
         val inflater = context.layoutInflater
         val rowView = inflater.inflate(R.layout.list_post, null, true)
@@ -29,9 +33,12 @@ class PostListAdapter(
 
         titleText.text = title[position]
         subtitleText.text = description[position]
-        Picasso.with(context).load(image[position]).placeholder(R.drawable.loading_animation)
-            .error(R.drawable.ic_twotone_sync_problem_24)
-            .transform(CircleTransform()).into(imageView)
+        val radius = 50
+        Glide.with(this.context)
+            .load(image[position])
+            .placeholder(R.drawable.loading_animation)
+            .transform(CenterCrop(), RoundedCorners(radius))
+            .into(imageView)
 
         return rowView
     }
