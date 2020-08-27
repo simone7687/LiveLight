@@ -306,16 +306,16 @@ class PostPublisherActivity : AppCompatActivity() {
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful && task.result != null) {
                         // Publication through local image
-                            publishPostWhichLocalImage(
-                                editText_title.text.toString(),
-                                editTextTextMultiLine_description.text.toString(),
-                                editTextDate.text.toString(),
-                                categorySelected,
-                                task.result!!,
+                        publishPostWhichLocalImage(
+                            editText_title.text.toString(),
+                            editTextTextMultiLine_description.text.toString(),
+                            editTextDate.text.toString(),
+                            categorySelected,
+                            task.result!!,
                             image
-                            )
-                        } else {
-                            // TODO: close Loading Activity
+                        )
+                    } else {
+                        // TODO: close Loading Activity
                         Toast.makeText(this, R.string.no_location, Toast.LENGTH_SHORT).show()
                     }
                 }

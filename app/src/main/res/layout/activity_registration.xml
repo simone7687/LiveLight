@@ -114,11 +114,11 @@
             android:layout_marginBottom="@dimen/element_margin"
             android:text="@string/authorizes_data" />
 
-            <Button
-                android:id="@+id/button_registration"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+        <Button
+            android:id="@+id/button_registration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/activity_vertical_margin"
-                android:text="@string/registration" />
+            android:text="@string/registration" />
     </LinearLayout>
 </ScrollView>

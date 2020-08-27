@@ -1,5 +1,7 @@
 package it.uniupo.livelight.search
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ListView
 import android.widget.Toast
+import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.Fragment
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.firestore.FirebaseFirestore
@@ -21,8 +24,12 @@ import kotlin.collections.ArrayList
 class SearchFragment : Fragment() {
     private val db = FirebaseFirestore.getInstance()
 
+    private val REQUEST_CODE_LOCATION = 300
+
     private var distanceSelected: Int = 0
     var lastLocation: Location? = null
+    private lateinit var list: ListView
+    var search_text: String? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,32 +37,13 @@ class SearchFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_search, container, false)
+        list = root.findViewById(R.id.list_post)
 
         root.spinner_distance.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(p0: AdapterView<*>?, p1: View?, p2: Int, p3: Long) {
                 // p2: position
                 distanceSelected = p2
-                // Last position
-                // TODO: Requesting permits
-                val fusedLocationClient =
-                    LocationServices.getFusedLocationProviderClient(requireActivity())
-                fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-                    // Got last known location
-                    if (location != null) {
-                        lastLocation = location
-                    } else if (p2 != 0)
-                        Toast.makeText(
-                            activity?.baseContext, R.string.no_location,
-                            Toast.LENGTH_SHORT
-                        ).show()
-                }
-                // Update the list
-                if (lastLocation != null)
-                    updatePostList(
-                        root.findViewById(R.id.list_post),
-                        distanceSelected,
-                        lastLocation
-                    )
+                spinnerDistanceHandler()
             }
 
             override fun onNothingSelected(p0: AdapterView<*>?) {
@@ -67,6 +55,55 @@ class SearchFragment : Fragment() {
         updatePostList(root.findViewById(R.id.list_post), distanceSelected, lastLocation)
 
         return root
+    }
+
+    /**
+     * spinnerDistanceHandler: update the list according to the location
+     */
+    fun spinnerDistanceHandler() {
+        // Requesting permits
+        if (distanceSelected != 0) {
+            val permissions = arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION)
+            requestPermissions(permissions, REQUEST_CODE_LOCATION)
+        }
+        // Last position
+        val fusedLocationClient =
+            LocationServices.getFusedLocationProviderClient(requireActivity())
+        if (checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(
+                requireContext(),
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return
+        }
+        fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+            // Got last known location
+            if (location != null) {
+                lastLocation = location
+            } else if (distanceSelected != 0)
+                Toast.makeText(
+                    activity?.baseContext, R.string.no_location,
+                    Toast.LENGTH_SHORT
+                ).show()
+        }
+        // Update the list
+        if (lastLocation != null)
+            updatePostList(
+                list,
+                distanceSelected,
+                lastLocation,
+                search_text
+            )
     }
 
     /**
@@ -87,6 +124,8 @@ class SearchFragment : Fragment() {
                         model.title = item.get(getString(R.string.db__title)) as String
                         model.description = item.get(getString(R.string.db__description)) as String
                         model.image = item.get(getString(R.string.db__imageUrl)) as String
+                        model.coordinates =
+                            item.get(getString(R.string.db__coordinates)) as ArrayList<Double>
 
                         // Find only posts of the selected distance
                         if (distanceSelected != 0 && lastLocation != null) {
@@ -143,10 +182,10 @@ class SearchFragment : Fragment() {
         postList: ListView,
         distanceSelected: Int,
         lastLocation: Location?,
-        text: String
+        text: String?
     ) {
         // If it is empty do not search with Keywords
-        if (text.isEmpty()) {
+        if (text.isNullOrEmpty()) {
             updatePostList(postList, distanceSelected, lastLocation)
             return
         }
@@ -168,6 +207,8 @@ class SearchFragment : Fragment() {
                         model.title = item.get(getString(R.string.db__title)) as String
                         model.description = item.get(getString(R.string.db__description)) as String
                         model.image = item.get(getString(R.string.db__imageUrl)) as String
+                        model.coordinates =
+                            item.get(getString(R.string.db__coordinates)) as ArrayList<Double>
 
                         // Find only posts of the selected distance
                         if (distanceSelected != 0 && lastLocation != null) {
