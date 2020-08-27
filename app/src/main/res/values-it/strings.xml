@@ -30,6 +30,7 @@
     <!-- Main profile -->
     <string name="profile">Profilo</string>
     <string name="profile_description">Ecco i post che hai publicato.</string>
+    <string name="any_distance">Qualsiasi distanza</string>
     <!-- Settings -->
     <string name="settings">Imposttazioni</string>
     <!-- Post Publisher -->
