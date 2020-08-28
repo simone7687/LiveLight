@@ -77,9 +77,7 @@ class ProfileFragment : Fragment() {
                 if (task.isSuccessful) {
                     var countPost = 0
                     // for PostListAdapter
-                    val titlePost: ArrayList<String> = ArrayList()
-                    val descriptionPost: ArrayList<String> = ArrayList()
-                    val imagePost: ArrayList<String> = ArrayList()
+                    val posts: ArrayList<PostModel> = ArrayList()
 
                     for (item in task.result!!.documents) {
                         val model = PostModel(item.id)
@@ -89,21 +87,14 @@ class ProfileFragment : Fragment() {
                         model.image = item.get(getString(R.string.db__imageUrl)) as String
 
                         // for PostListAdapter
-                        titlePost.add(model.title)
-                        descriptionPost.add(model.description)
-                        imagePost.add(model.image)
+                        posts.add(model)
 
                         countPost++
                     }
 
                     // Update the list of posts
-                    postList.adapter =
-                        PostListAdapter(
-                            this.requireActivity(),
-                            titlePost,
-                            descriptionPost,
-                            imagePost
-                        )
+                    val postsAdapter = PostListAdapter(this.requireActivity(), posts)
+                    postList.adapter = postsAdapter
                     // Description of user data
                     textPostsPosted.text = getString(R.string.posts_posted) + ": " + countPost
                 }

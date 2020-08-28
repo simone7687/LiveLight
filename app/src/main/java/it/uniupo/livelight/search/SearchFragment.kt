@@ -180,9 +180,7 @@ class SearchFragment : Fragment() {
         lastLocation: Location?
     ) {
         // for PostListAdapter
-        val titlePost: ArrayList<String> = ArrayList()
-        val descriptionPost: ArrayList<String> = ArrayList()
-        val imagePost: ArrayList<String> = ArrayList()
+        val posts: ArrayList<PostModel> = ArrayList()
 
         loop@ for (item in result!!.documents) {
             val model = PostModel(item.id)
@@ -219,18 +217,11 @@ class SearchFragment : Fragment() {
             }
 
             // for PostListAdapter
-            titlePost.add(model.title)
-            descriptionPost.add(model.description)
-            imagePost.add(model.image)
+            posts.add(model)
         }
 
         // Update the list of posts
-        postList.adapter =
-            PostListAdapter(
-                this.requireActivity(),
-                titlePost,
-                descriptionPost,
-                imagePost
-            )
+        val postsAdapter = PostListAdapter(this.requireActivity(), posts)
+        postList.adapter = postsAdapter
     }
 }

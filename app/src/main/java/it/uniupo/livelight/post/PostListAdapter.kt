@@ -17,10 +17,8 @@ import it.uniupo.livelight.R
  */
 class PostListAdapter(
     private val context: Activity,
-    private val title: ArrayList<String>,
-    private val description: ArrayList<String>,
-    private val image: ArrayList<String>
-) : ArrayAdapter<String>(context, R.layout.list_post, title) {
+    private val post: ArrayList<PostModel>
+) : ArrayAdapter<PostModel>(context, R.layout.list_post, post) {
 
     @SuppressLint("ViewHolder", "InflateParams")
     override fun getView(position: Int, view: View?, parent: ViewGroup): View {
@@ -31,11 +29,11 @@ class PostListAdapter(
         val imageView = rowView.findViewById(R.id.icon_list) as ImageView
         val subtitleText = rowView.findViewById(R.id.description_list) as TextView
 
-        titleText.text = title[position]
-        subtitleText.text = description[position]
+        titleText.text = post[position].title
+        subtitleText.text = post[position].description
         val radius = 50
         Glide.with(this.context)
-            .load(image[position])
+            .load(post[position].image)
             .placeholder(R.drawable.loading_animation)
             .transform(CenterCrop(), RoundedCorners(radius))
             .into(imageView)
