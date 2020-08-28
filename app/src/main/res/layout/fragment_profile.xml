@@ -23,7 +23,7 @@
             android:id="@+id/textView_posts_posted"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/uploading_progress"
+            android:text="@string/loading_progress"
             android:textSize="17sp"
             android:layout_marginBottom="@dimen/element_margin" />
 

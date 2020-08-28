@@ -23,6 +23,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import it.uniupo.livelight.R
 import kotlinx.android.synthetic.main.activity_post_publisher.*
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -361,6 +362,7 @@ class PostPublisherActivity : AppCompatActivity() {
      * Publish the post
      * Aggregate loading status with a Loading Activity
      */
+    @SuppressLint("SimpleDateFormat")
     private fun publishPostWhichServerImage(
         title: String,
         description: String,
@@ -384,6 +386,7 @@ class PostPublisherActivity : AppCompatActivity() {
             return
         }
 
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm:ss")
         // Create a list of data to upload
         val data = hashMapOf(
             getString(R.string.db__userId) to auth.currentUser?.uid,
@@ -395,7 +398,7 @@ class PostPublisherActivity : AppCompatActivity() {
                 lastLocation.longitude
             ).toList(),
             getString(R.string.db__dateExpire) to date,
-            getString(R.string.db__datePosted) to Calendar.getInstance().time,
+            getString(R.string.db__datePosted) to dateFormat.format(Date()).toString(),
             getString(R.string.db__imageUrl) to image.toString(),
             getString(R.string.db__keywords) to title.toLowerCase(Locale.getDefault()).split(" ")
                 .toMutableList()

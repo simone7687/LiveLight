@@ -187,6 +187,7 @@ class SearchFragment : Fragment() {
             model.user = item.get(getString(R.string.db__userId)) as String
             model.title = item.get(getString(R.string.db__title)) as String
             model.description = item.get(getString(R.string.db__description)) as String
+            model.datePosted = item.get(getString(R.string.db__datePosted)) as String
             model.image = item.get(getString(R.string.db__imageUrl)) as String
             model.coordinates =
                 item.get(getString(R.string.db__coordinates)) as ArrayList<Double>

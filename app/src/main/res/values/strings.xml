@@ -76,7 +76,7 @@
     <string name="take_photo">Take a photo</string>
     <string name="publish">Publish</string>
     <string name="posts_posted">Posts uploaded</string>
-    <string name="uploading_progress">Uploading in progress…</string>
+    <string name="loading_progress">Loading in progress…</string>
     <string name="hi">Hi</string>
     <string name="map">Map</string>
 </resources>
