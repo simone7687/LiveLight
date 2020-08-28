@@ -1,14 +1,22 @@
 package it.uniupo.livelight.search
 
 import android.Manifest
+import android.content.pm.PackageManager
+import android.location.Location
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
 import com.google.android.gms.maps.MapsInitializer
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
 import it.uniupo.livelight.R
 
 class MapActivity : AppCompatActivity() {
+    private lateinit var googleMap: GoogleMap
+
     private val REQUEST_CODE_LOCATION = 300
     private lateinit var map: MapView
 
@@ -32,6 +40,33 @@ class MapActivity : AppCompatActivity() {
         // Back button
         val actionBar = supportActionBar
         actionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+
+    /**
+     * Shows the current location through a zoom, but first with position permissions
+     */
+    private fun showCurrentPosition() {
+        // Check permissions
+        if (checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) ==
+            PackageManager.PERMISSION_DENIED
+        ) {
+            val permissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
+            requestPermissions(permissions, REQUEST_CODE_LOCATION)
+        } else {
+            googleMap.isMyLocationEnabled = true
+            // Get last location
+            val fusedLocationClient =
+                LocationServices.getFusedLocationProviderClient(this)
+            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                if (location != null) {
+                    // Zoom animation
+                    val currentLocation = LatLng(location.latitude, location.longitude)
+                    val cameraPosition =
+                        CameraPosition.Builder().target(currentLocation).zoom(12f).build()
+                    googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+                }
+            }
+        }
     }
 
     /**
