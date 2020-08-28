@@ -16,7 +16,7 @@ import android.widget.ArrayAdapter
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -56,7 +56,6 @@ class PostPublisherActivity : AppCompatActivity() {
 
         button_image.setOnClickListener {
             // Check permissions
-            // Check READ_EXTERNAL_STORAGE permission
             if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) ==
                 PackageManager.PERMISSION_DENIED
             ) {
@@ -69,7 +68,6 @@ class PostPublisherActivity : AppCompatActivity() {
 
         button_camera.setOnClickListener {
             // Check permissions
-            // Check READ_EXTERNAL_STORAGE permission
             if (checkSelfPermission(Manifest.permission.CAMERA) ==
                 PackageManager.PERMISSION_DENIED
             ) {
@@ -97,16 +95,7 @@ class PostPublisherActivity : AppCompatActivity() {
         }
 
         button_publish.setOnClickListener {
-            // Check permissions
-            // Check READ_EXTERNAL_STORAGE permission
-            if (checkSelfPermission(Manifest.permission.ACCESS_COARSE_LOCATION) ==
-                PackageManager.PERMISSION_DENIED
-            ) {
-                val permissions = arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION)
-                requestPermissions(permissions, REQUEST_CODE_LOCATION)
-            } else {
-                publishPostWhichFields()
-            }
+            publishPostWhichFields()
         }
 
         // Back button
@@ -283,25 +272,17 @@ class PostPublisherActivity : AppCompatActivity() {
         // TODO: update Loading Activity: Loading in progress
 
         if (checkEmptyFields()) {
-            // Gets current position
-            val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-            if (ActivityCompat.checkSelfPermission(
+            // Requests location permission
+            if (ContextCompat.checkSelfPermission(
                     this,
                     Manifest.permission.ACCESS_FINE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                    this,
-                    Manifest.permission.ACCESS_COARSE_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
+                ) == PackageManager.PERMISSION_DENIED
             ) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return
+                val permissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
+                requestPermissions(permissions, REQUEST_CODE_LOCATION)
             }
+            // Gets last position
+            val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
             fusedLocationClient!!.lastLocation
                 .addOnCompleteListener(this) { task ->
                     if (task.isSuccessful && task.result != null) {

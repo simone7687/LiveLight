@@ -29,12 +29,6 @@ class MapActivity : AppCompatActivity() {
         map.onCreate(savedInstanceState)
         map.onResume()
 
-        // Requests location permission
-        requestPermissions(
-            arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
-            REQUEST_CODE_LOCATION
-        )
-
         MapsInitializer.initialize(applicationContext)
 
         // Back button
@@ -64,6 +58,26 @@ class MapActivity : AppCompatActivity() {
                     val cameraPosition =
                         CameraPosition.Builder().target(currentLocation).zoom(12f).build()
                     googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
+                }
+            }
+        }
+    }
+
+    // Requested permission
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        when (requestCode) {
+            REQUEST_CODE_LOCATION -> {
+                if (grantResults.isNotEmpty() && grantResults[0] ==
+                    PackageManager.PERMISSION_GRANTED
+                ) {
+                    // ........................
+                    showCurrentPosition()
+                } else {
+                    Toast.makeText(this, R.string.permission_denied, Toast.LENGTH_SHORT).show()
                 }
             }
         }

@@ -52,7 +52,8 @@ class SearchFragment : Fragment() {
             }
 
             override fun onNothingSelected(p0: AdapterView<*>?) {
-                TODO("Not yet implemented")
+                if (lastLocation == null)
+                    spinnerDistanceHandler()
             }
 
         }
@@ -68,38 +69,26 @@ class SearchFragment : Fragment() {
     fun spinnerDistanceHandler() {
         // Requesting permits
         if (distanceSelected != 0) {
-            val permissions = arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION)
-            requestPermissions(permissions, REQUEST_CODE_LOCATION)
-        }
-        // Last position
-        val fusedLocationClient =
-            LocationServices.getFusedLocationProviderClient(requireActivity())
-        if (checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED && checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return
-        }
-        fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-            // Got last known location
-            if (location != null) {
-                lastLocation = location
-            } else if (distanceSelected != 0)
-                Toast.makeText(
-                    activity?.baseContext, R.string.no_location,
-                    Toast.LENGTH_SHORT
-                ).show()
+            // Requests location permission
+            if (checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) ==
+                PackageManager.PERMISSION_DENIED
+            ) {
+                val permissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION)
+                requestPermissions(permissions, REQUEST_CODE_LOCATION)
+            }
+            // Gets last position
+            val fusedLocationClient =
+                LocationServices.getFusedLocationProviderClient(requireActivity())
+            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
+                // Got last known location
+                if (location != null) {
+                    lastLocation = location
+                } else if (distanceSelected != 0)
+                    Toast.makeText(
+                        activity?.baseContext, R.string.no_location,
+                        Toast.LENGTH_SHORT
+                    ).show()
+            }
         }
         // Update the list
         if (lastLocation != null)
