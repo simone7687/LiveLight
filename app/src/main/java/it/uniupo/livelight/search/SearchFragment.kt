@@ -75,6 +75,9 @@ class SearchFragment : Fragment(), MaterialSearchBar.OnSearchActionListener {
     }
 
     override fun onButtonClicked(buttonCode: Int) {
+        when (buttonCode) {
+            MaterialSearchBar.BUTTON_NAVIGATION -> openMap()//drawer.openDrawer(Gravity.LEFT)
+        }
     }
 
     /**
