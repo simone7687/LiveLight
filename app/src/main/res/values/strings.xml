@@ -62,6 +62,11 @@
     <!-- Post Publisher -->
     <string name="new_post">New Post</string>
     <string name="publish_post_description">Publish a new post</string>
+    <!-- Post Activity -->
+    <string name="description_title">Description:</string>
+    <string name="date_posted_title">Posted on:</string>
+    <string name="distance_title">Distance:</string>
+    <string name="user_title">Posted by:</string>
     <!-- Other -->
     <string name="app_name" translatable="false">Live Light</string>
     <string name="join_description">Let\'s join us\nShare items you don\'t use</string>

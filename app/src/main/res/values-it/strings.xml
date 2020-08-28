@@ -36,6 +36,11 @@
     <!-- Post Publisher -->
     <string name="new_post">Nuovo post</string>
     <string name="publish_post_description">Pubblica un nuvo post</string>
+    <!-- Post Activity -->
+    <string name="description_title">Descrizione:</string>
+    <string name="date_posted_title">Postato il:</string>
+    <string name="distance_title">Dista:</string>
+    <string name="user_title">Postato il:</string>
     <!-- Other -->
     <string name="join_description">Unisciti a noi\nCondividi gli oggetti che non utilizzi</string>
     <string name="close">Chiudi</string>

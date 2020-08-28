@@ -17,6 +17,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import it.uniupo.livelight.R
+import it.uniupo.livelight.post.PostActivity
 import it.uniupo.livelight.post.PostListAdapter
 import it.uniupo.livelight.post.PostModel
 import kotlinx.android.synthetic.main.fragment_search.view.*
@@ -224,5 +225,20 @@ class SearchFragment : Fragment() {
         // Update the list of posts
         val postsAdapter = PostListAdapter(this.requireActivity(), posts)
         postList.adapter = postsAdapter
+        postList.setOnItemClickListener { parent, view, position, id ->
+            postsAdapter.getItem(position)?.let { viewPost(it) }
+        }
+    }
+
+    fun viewPost(post: PostModel) {
+        val aa = PostActivity()
+        val intent = Intent(activity, aa::class.java)
+        intent.putExtra("post_id", post.id)
+        intent.putExtra("post_user", post.user)
+        intent.putExtra("post_title", post.title)
+        intent.putExtra("post_description", post.description)
+        intent.putExtra("post_datePosted", post.datePosted)
+        intent.putExtra("post_image", post.image)
+        startActivity(intent)
     }
 }

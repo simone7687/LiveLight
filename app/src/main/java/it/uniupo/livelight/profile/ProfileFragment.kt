@@ -1,6 +1,7 @@
 package it.uniupo.livelight.profile
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,6 +14,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import it.uniupo.livelight.R
+import it.uniupo.livelight.post.PostActivity
 import it.uniupo.livelight.post.PostListAdapter
 import it.uniupo.livelight.post.PostModel
 
@@ -96,6 +98,9 @@ class ProfileFragment : Fragment() {
                     // Update the list of posts
                     val postsAdapter = PostListAdapter(this.requireActivity(), posts)
                     postList.adapter = postsAdapter
+                    postList.setOnItemClickListener { parent, view, position, id ->
+                        postsAdapter.getItem(position)?.let { viewPost(it) }
+                    }
                     // Description of user data
                     textPostsPosted.text = getString(R.string.posts_posted) + ": " + countPost
                 }
@@ -105,5 +110,17 @@ class ProfileFragment : Fragment() {
                     Toast.LENGTH_SHORT
                 ).show()
             }
+    }
+
+    fun viewPost(post: PostModel) {
+        val aa = PostActivity()
+        val intent = Intent(activity, aa::class.java)
+        intent.putExtra("post_id", post.id)
+        intent.putExtra("post_user", post.user)
+        intent.putExtra("post_title", post.title)
+        intent.putExtra("post_description", post.description)
+        intent.putExtra("post_datePosted", post.datePosted)
+        intent.putExtra("post_image", post.image)
+        startActivity(intent)
     }
 }
