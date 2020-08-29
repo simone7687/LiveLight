@@ -67,6 +67,10 @@
     <string name="date_posted_title">Posted on:</string>
     <string name="distance_title">Distance:</string>
     <string name="user_title">Posted by:</string>
+    <!-- Dialog -->
+    <string name="delete_post">Delete post</string>
+    <string name="do_you_want_delete_post">Do you want to delete the post?</string>
+    <string name="write_here">Write here</string>
     <!-- Other -->
     <string name="app_name" translatable="false">Live Light</string>
     <string name="join_description">Let\'s join us\nShare items you don\'t use</string>
@@ -84,4 +88,7 @@
     <string name="loading_progress">Loading in progress…</string>
     <string name="hi">Hi</string>
     <string name="map">Map</string>
+    <string name="delete">Delete</string>
+    <string name="send">Send</string>
+    <string name="message">Message</string>
 </resources>

@@ -5,12 +5,15 @@ import android.location.Location
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import it.uniupo.livelight.R
+import it.uniupo.livelight.dialog.ApproveFragment
+import it.uniupo.livelight.dialog.InsertTextInitiationFragment
 import kotlinx.android.synthetic.main.activity_post.*
 import java.util.*
 import kotlin.math.roundToInt
@@ -18,7 +21,8 @@ import kotlin.math.roundToInt
 /**
  * Activity to view the Post
  */
-class PostActivity : AppCompatActivity() {
+class PostActivity : AppCompatActivity(), ApproveFragment.ApproveDialogListener,
+    InsertTextInitiationFragment.InsertTextListener {
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
 
@@ -43,16 +47,24 @@ class PostActivity : AppCompatActivity() {
         if (auth.currentUser?.uid.toString() == post.user) {
             fab_post.setImageDrawable(getDrawable(R.drawable.ic_baseline_delete_white_24))
             fab_post.setOnClickListener {
-                // Delete posts
-                db.collection("available_items").document(post.id).delete()
-                    .addOnSuccessListener {
-                        onBackPressed()
-                        Toast.makeText(this, "Eliminato", Toast.LENGTH_SHORT).show()
-                    }
+                val fm: FragmentManager = supportFragmentManager
+                val deleteDialog = ApproveFragment()
+                val b = Bundle()
+                b.putInt("dialog_title", R.string.delete_post)
+                b.putInt("dialog_text", R.string.do_you_want_delete_post)
+                b.putInt("dialog_positive", R.string.delete)
+                deleteDialog.arguments = b
+                deleteDialog.show(fm, "fragment_edit_name")
             }
         } else {
             fab_post.setOnClickListener {
-                // TODO: Start chatting
+                val fm: FragmentManager = supportFragmentManager
+                val chatDialog = InsertTextInitiationFragment()
+                val b = Bundle()
+                b.putInt("dialog_title", R.string.message)
+                b.putInt("dialog_positive", R.string.send)
+                chatDialog.arguments = b
+                chatDialog.show(fm, "fragment_edit_name")
             }
         }
         // Show fab
@@ -148,5 +160,21 @@ class PostActivity : AppCompatActivity() {
     override fun onSupportNavigateUp(): Boolean {
         onBackPressed()
         return true
+    }
+
+    // If the dialogue has a postponed response then delete the post.
+    override fun actionApproveDialog(value: Boolean) {
+        if (value) {
+            db.collection("available_items").document(post.id).delete()
+                .addOnSuccessListener {
+                    onBackPressed()
+                    Toast.makeText(this, "Eliminato", Toast.LENGTH_SHORT).show()
+                }
+        }
+    }
+
+    // If the dialogue has a delayed response then send the message.
+    override fun sendTextDialog(text: String) {
+        // TODO: send the message
     }
 }
