@@ -51,6 +51,15 @@
     <string name="message">Messagio</string>
     <string name="message_sent">Messaggo inviato</string>
     <string name="there_is_already_chat">Hai già iniziato una chat per questo articolo, guarda in Messaggi.</string>
+    <string name="no_messages">Non ci cono messaggi. Cosa stai aspettando? Apri un posto e inizia una conversazione.</string>
+    <!-- Lend -->
+    <string name="start_lend">Avviare il prestito</string>
+    <string name="end_lend">Terminare il prestito</string>
+    <string name="lend_article">Presta articolo</string>
+    <string name="are_sure_lend_your_article">Sei sicuro di voler prestare il tuo articolo?</string>
+    <!-- Reviews -->
+    <string name="user_rating">Valutazione utente</string>
+    <string name="currency">Valuta</string>
     <!-- Other -->
     <string name="join_description">Unisciti a noi\nCondividi gli oggetti che non utilizzi</string>
     <string name="close">Chiudi</string>

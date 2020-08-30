@@ -19,7 +19,7 @@
 
     <fragment
         android:id="@+id/navigation_messages"
-        android:name="it.uniupo.livelight.messages.MessagesFragment"
+        android:name="it.uniupo.livelight.chats.ChatsFragment"
         android:label="@string/messages"
-        tools:layout="@layout/fragment_messages" />
+        tools:layout="@layout/fragment_chats" />
 </navigation>

@@ -7,6 +7,9 @@
     <string name="db_user_details" translatable="false">user_details</string>
     <string name="db_chats" translatable="false">chats</string>
     <string name="db_messages" translatable="false">messages</string>
+    <string name="db_lend" translatable="false">lends</string>
+    <string name="db_reviewers" translatable="false">reviewers</string>
+    <string name="db_user_reviews" translatable="false">user_reviews</string>
     <!-- DataBase Field -->
     <string name="db__userId" translatable="false">UserId</string>
     <string name="db__usersId" translatable="false">UsersId</string>
@@ -22,6 +25,8 @@
     <string name="db__dateTime" translatable="false">DateTime</string>
     <string name="db__dateExpire" translatable="false">ExpireDate</string>
     <string name="db__datePosted" translatable="false">PostedOn</string>
+    <string name="db__dateEnd" translatable="false">DateEnd</string>
+    <string name="db__dateStart" translatable="false">DateStart</string>
     <string name="db__imageUrl" translatable="false">ImageUri</string>
     <string name="db__keywords" translatable="false">Keywords</string>
     <string name="db__name" translatable="false">Name</string>
@@ -29,6 +34,8 @@
     <string name="db__city" translatable="false">City</string>
     <string name="db__address" translatable="false">Address</string>
     <string name="db__text" translatable="false">Text</string>
+    <string name="db__stars" translatable="false">Stars</string>
+    <string name="db__reviewer" translatable="false">ReviewerId</string>
     <!-- Storage -->
     <string name="storage_folder_post_images" translatable="false">uploaded_images/</string>
     <!-- Warning && Errors -->
@@ -88,6 +95,15 @@
     <string name="message">Message</string>
     <string name="message_sent">Message sent</string>
     <string name="there_is_already_chat">You have already started a chat for this article, look in Messages.</string>
+    <string name="no_messages">There are no messages. Open a place and start a conversation.</string>
+    <!-- Lend -->
+    <string name="start_lend">Start the loan</string>
+    <string name="end_lend">End the loan</string>
+    <string name="lend_article">Lend article</string>
+    <string name="are_sure_lend_your_article">Are you sure you want to lend your article?</string>
+    <!-- Reviews -->
+    <string name="user_rating">User rating</string>
+    <string name="currency">Currency</string>
     <!-- Other -->
     <string name="app_name" translatable="false">Live Light</string>
     <string name="join_description">Let\'s join us\nShare items you don\'t use</string>
