@@ -200,19 +200,24 @@ class SearchFragment : Fragment() {
                 itemLoc.longitude = model.coordinates[1]
 
                 when (distanceSelected) {
-                    //10km
+                    // 10km
                     1 -> {
                         if (lastLocation.distanceTo(itemLoc) > 10000)
                             continue@loop
                     }
-                    //20km
+                    // 30km
                     2 -> {
-                        if (lastLocation.distanceTo(itemLoc) > 20000)
+                        if (lastLocation.distanceTo(itemLoc) > 30000)
                             continue@loop
                     }
-                    //50km
+                    // 50km
                     3 -> {
                         if (lastLocation.distanceTo(itemLoc) > 50000)
+                            continue@loop
+                    }
+                    // 100km
+                    3 -> {
+                        if (lastLocation.distanceTo(itemLoc) > 100000)
                             continue@loop
                     }
                 }

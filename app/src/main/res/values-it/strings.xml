@@ -40,7 +40,7 @@
     <string name="description_title">Descrizione:</string>
     <string name="date_posted_title">Postato il:</string>
     <string name="distance_title">Dista:</string>
-    <string name="user_title">Postato il:</string>
+    <string name="user_title">Postato da:</string>
     <!-- Dialog -->
     <string name="delete_post">Elimina post</string>
     <string name="do_you_want_delete_post">Sei sicuro di eliminare il post?</string>

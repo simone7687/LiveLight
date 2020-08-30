@@ -38,8 +38,8 @@ class MainActivity : AppCompatActivity() {
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
 
         val navController = findNavController(R.id.nav_host_fragment)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
+        // Passing each bar_main_menu ID as a set of Ids because each
+        // bar_main_menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.navigation_profile,
@@ -77,10 +77,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Adds the menu "with 3 dots"
+     * Adds the bar_main_menu "with 3 dots"
      */
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu, menu)
+        menuInflater.inflate(R.menu.bar_main_menu, menu)
         myMenu = menu
         return true
     }
