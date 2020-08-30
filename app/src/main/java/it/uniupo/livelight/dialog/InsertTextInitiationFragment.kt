@@ -29,11 +29,10 @@ class InsertTextInitiationFragment : DialogFragment() {
     companion object {
         private const val FRAGMENT_TAG = "custom_dialog"
 
-        fun newInstance() = InsertTextInitiationFragment()
+        private fun newInstance() = InsertTextInitiationFragment()
 
         fun show(fragmentManager: FragmentManager): InsertTextInitiationFragment {
             val dialog = newInstance()
-            dialog.isCancelable = false
             dialog.show(fragmentManager, FRAGMENT_TAG)
             return dialog
         }
@@ -77,11 +76,6 @@ class InsertTextInitiationFragment : DialogFragment() {
 
         val dialog = builder.create()
 
-        // optional
-        dialog.setOnShowListener {
-            // do something
-        }
-
         return dialog
     }
 
@@ -92,7 +86,7 @@ class InsertTextInitiationFragment : DialogFragment() {
         } catch (e: ClassCastException) {
             throw ClassCastException(
                 context.toString().toString() +
-                        "must implement ExampleDialogListener"
+                        "must implement InsertTextListener"
             )
         }
     }

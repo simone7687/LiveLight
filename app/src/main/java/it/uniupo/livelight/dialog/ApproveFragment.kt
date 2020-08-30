@@ -25,7 +25,6 @@ class ApproveFragment : DialogFragment() {
     private var text: String = ""
     private lateinit var positiveButtonText: String
     private lateinit var negativeButtonText: String
-    private var ret: Boolean = false
 
     companion object {
         private const val FRAGMENT_TAG = "custom_dialog"
@@ -75,11 +74,6 @@ class ApproveFragment : DialogFragment() {
 
         val dialog = builder.create()
 
-        // optional
-        dialog.setOnShowListener {
-            // do something
-        }
-
         return dialog
     }
 
@@ -90,7 +84,7 @@ class ApproveFragment : DialogFragment() {
         } catch (e: ClassCastException) {
             throw ClassCastException(
                 context.toString().toString() +
-                        "must implement ExampleDialogListener"
+                        "must implement ApproveDialogListener"
             )
         }
     }

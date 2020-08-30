@@ -45,6 +45,12 @@
     <string name="delete_post">Elimina post</string>
     <string name="do_you_want_delete_post">Sei sicuro di eliminare il post?</string>
     <string name="write_here">Scrivi qui</string>
+    <string name="post_deleted">Il post è stato eliminato</string>
+    <!-- Message -->
+    <string name="send">Invia</string>
+    <string name="message">Messagio</string>
+    <string name="message_sent">Messaggo inviato</string>
+    <string name="there_is_already_chat">Hai già iniziato una chat per questo articolo, guarda in Messaggi.</string>
     <!-- Other -->
     <string name="join_description">Unisciti a noi\nCondividi gli oggetti che non utilizzi</string>
     <string name="close">Chiudi</string>
@@ -62,6 +68,4 @@
     <string name="hi">Ciao</string>
     <string name="map">Mappa</string>
     <string name="delete">Elimina</string>
-    <string name="send">Invia</string>
-    <string name="message">Messagio</string>
 </resources>

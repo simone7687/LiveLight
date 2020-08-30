@@ -15,6 +15,7 @@ import it.uniupo.livelight.R
 import it.uniupo.livelight.dialog.ApproveFragment
 import it.uniupo.livelight.dialog.InsertTextInitiationFragment
 import kotlinx.android.synthetic.main.activity_post.*
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.roundToInt
 
@@ -54,17 +55,39 @@ class PostActivity : AppCompatActivity(), ApproveFragment.ApproveDialogListener,
                 b.putInt("dialog_text", R.string.do_you_want_delete_post)
                 b.putInt("dialog_positive", R.string.delete)
                 deleteDialog.arguments = b
-                deleteDialog.show(fm, "fragment_edit_name")
+                deleteDialog.show(fm, "fragment_delete")
             }
         } else {
             fab_post.setOnClickListener {
-                val fm: FragmentManager = supportFragmentManager
-                val chatDialog = InsertTextInitiationFragment()
-                val b = Bundle()
-                b.putInt("dialog_title", R.string.message)
-                b.putInt("dialog_positive", R.string.send)
-                chatDialog.arguments = b
-                chatDialog.show(fm, "fragment_edit_name")
+                // Check if the chat already exists
+                var existsChat = false
+                db.collection(getString(R.string.db_chats))
+                    .whereEqualTo(getString(R.string.db__postId), post.id).get()
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            loop@ for (item in task.result!!.documents) {
+                                val users =
+                                    item.get(getString(R.string.db__usersId)) as ArrayList<*>
+                                if (users.isNotEmpty())
+                                    if (users.contains(post.user) && users.contains(auth.uid))
+                                        existsChat = true
+                            }
+                            if (!existsChat) {
+                                val fm: FragmentManager = supportFragmentManager
+                                val chatDialog = InsertTextInitiationFragment()
+                                val b = Bundle()
+                                b.putInt("dialog_title", R.string.message)
+                                b.putInt("dialog_positive", R.string.send)
+                                chatDialog.arguments = b
+                                chatDialog.show(fm, "fragment_chat")
+                            } else {
+                                Toast.makeText(
+                                    baseContext, R.string.there_is_already_chat,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                    }
             }
         }
         // Show fab
@@ -165,16 +188,91 @@ class PostActivity : AppCompatActivity(), ApproveFragment.ApproveDialogListener,
     // If the dialogue has a postponed response then delete the post.
     override fun actionApproveDialog(value: Boolean) {
         if (value) {
-            db.collection("available_items").document(post.id).delete()
+            db.collection(getString(R.string.db_post)).document(post.id).delete()
                 .addOnSuccessListener {
                     onBackPressed()
-                    Toast.makeText(this, "Eliminato", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, getString(R.string.post_deleted), Toast.LENGTH_SHORT)
+                        .show()
                 }
         }
     }
 
     // If the dialogue has a delayed response then send the message.
     override fun sendTextDialog(text: String) {
-        // TODO: send the message
+        db.collection(getString(R.string.db_chats))
+            .whereEqualTo(getString(R.string.db__postId), post.id).get()
+            .addOnCompleteListener { task ->
+                // Chat data
+                if (task.isSuccessful) {
+                    val data = hashMapOf(
+                        getString(R.string.db__postId) to post.id,
+                        getString(R.string.db__imageUrl) to post.image,
+                        getString(R.string.db__title) to post.title,
+                        getString(R.string.db__usersId) to arrayListOf(
+                            auth.currentUser?.uid.toString(),
+                            post.user
+                        ),
+                        getString(R.string.db__ownerId) to post.user
+                    )
+                    // Enter the chat in the database and send the message
+                    val id = UUID.randomUUID().toString()
+                    db.collection(getString(R.string.db_chats)).document(id)
+                        .set(data as Map<String, Any>)
+                        .addOnSuccessListener {
+                            val bundle = Bundle()
+                            bundle.putString(getString(R.string.db__chatId), id)
+                            bundle.putStringArrayList(
+                                getString(R.string.db__usersId),
+                                arrayListOf<String>(
+                                    auth.currentUser?.uid.toString(),
+                                    post.user
+                                )
+                            )
+                            bundle.putString(getString(R.string.db__ownerId), post.user)
+                            // Send the message
+                            sendMessage(text, auth.currentUser?.uid.toString(), post.user, id)
+                        }
+                        .addOnFailureListener { exception ->
+                            Toast.makeText(
+                                this,
+                                exception.localizedMessage,
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                }
+            }
+    }
+
+
+    /**
+     * Send the message
+     */
+    @SuppressLint("SimpleDateFormat")
+    private fun sendMessage(text: String, sender: String, receiver: String, chatID: String) {
+        // Message data
+        val data = hashMapOf(
+            getString(R.string.db__text) to text,
+            getString(R.string.db__receiverId) to receiver,
+            getString(R.string.db__senderId) to sender,
+            getString(R.string.db__dateTime) to SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Date())
+        )
+        // Send the message
+        db.collection(getString(R.string.db_chats)).document(chatID)
+            .collection(getString(R.string.messages))
+            .document(UUID.randomUUID().toString())
+            .set(data as Map<String, Any>)
+            .addOnSuccessListener {
+                Toast.makeText(
+                    this,
+                    R.string.message_sent,
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+            .addOnFailureListener { exception ->
+                Toast.makeText(
+                    baseContext, exception.localizedMessage,
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
     }
 }
