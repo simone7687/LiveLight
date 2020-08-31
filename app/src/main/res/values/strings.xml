@@ -104,6 +104,7 @@
     <!-- Reviews -->
     <string name="user_rating">User rating</string>
     <string name="currency">Currency</string>
+    <string name="vote_only_after_use">Then vote only after you have taken advantage of the item.</string>
     <!-- Other -->
     <string name="app_name" translatable="false">Live Light</string>
     <string name="join_description">Let\'s join us\nShare items you don\'t use</string>

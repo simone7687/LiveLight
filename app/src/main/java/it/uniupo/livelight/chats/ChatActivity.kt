@@ -6,11 +6,14 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
+import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
 import it.uniupo.livelight.R
 import it.uniupo.livelight.dialog.ApproveFragment
@@ -46,6 +49,12 @@ class ChatActivity : AppCompatActivity(), ReviewFragment.ReviewDialogListener,
                     if (task.result != null)
                         title = task.result!!.get(getString(R.string.db__name)) as String
             }
+
+        val l = findViewById<RecyclerView>(R.id.ListView_message)
+        fetchMessages(l, chat.id)
+
+
+
 
         // Lend button
         val buttonLend = findViewById<Button>(R.id.button_startLend)
@@ -98,13 +107,28 @@ class ChatActivity : AppCompatActivity(), ReviewFragment.ReviewDialogListener,
         super.onOptionsItemSelected(item)
         when (item.itemId) {
             R.id.item_review -> {
-                val fm: FragmentManager = supportFragmentManager
-                val reviewDialog = ReviewFragment()
-                val b = Bundle()
-                b.putInt("dialog_title", R.string.user_rating)
-                b.putInt("dialog_positive", R.string.currency)
-                reviewDialog.arguments = b
-                reviewDialog.show(fm, "fragment_review")
+                db.collection(getString(R.string.db_lend))
+                    .document(auth.currentUser?.uid.toString() + receiver).get()
+                    .addOnCompleteListener { task ->
+                        if (task.isSuccessful) {
+                            val endDate = task.result?.getString(getString(R.string.end_lend))
+                            if (!endDate.isNullOrEmpty()) {
+                                val fm: FragmentManager = supportFragmentManager
+                                val reviewDialog = ReviewFragment()
+                                val b = Bundle()
+                                b.putInt("dialog_title", R.string.user_rating)
+                                b.putInt("dialog_positive", R.string.currency)
+                                reviewDialog.arguments = b
+                                reviewDialog.show(fm, "fragment_review")
+                            } else {
+                                Toast.makeText(
+                                    this,
+                                    R.string.there_is_already_chat,
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                    }
             }
             // Adds the bar_chat_menu
             android.R.id.home -> {
@@ -135,6 +159,7 @@ class ChatActivity : AppCompatActivity(), ReviewFragment.ReviewDialogListener,
     /**
      * End Lend
      */
+    @SuppressLint("SimpleDateFormat")
     private fun endLend(receiver: String, buttonLend: Button) {
         val data = hashMapOf(
             getString(R.string.end_lend) to SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Date())
@@ -147,15 +172,72 @@ class ChatActivity : AppCompatActivity(), ReviewFragment.ReviewDialogListener,
         buttonLend.text = getString(R.string.start_lend)
     }
 
+    /**
+     * ................................
+     */
+    @SuppressLint("SimpleDateFormat")
+    private fun sendMessage(text: String, sender: String, receiver: String, chatID: String) {
+        // .........
+        val data = hashMapOf(
+            getString(R.string.db__text) to text,
+            getString(R.string.db__receiverId) to receiver,
+            getString(R.string.db__senderId) to sender,
+            getString(R.string.db__dateTime) to SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Date())
+        )
+        // ................
+        db.collection(getString(R.string.db_chats)).document(chatID)
+            .collection(getString(R.string.messages))
+            .document(UUID.randomUUID().toString())
+            .set(data as Map<String, Any>)
+            .addOnFailureListener { exception ->
+                Toast.makeText(
+                    baseContext, exception.localizedMessage,
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+    }
+
+    /**
+     * Fetches all the messages from the current conversation
+     */
+    private fun fetchMessages(messageList: RecyclerView, chat: String) {
+        db.collection(getString(R.string.db_chats)).document(chat).collection(getString(R.string.db_messages))
+            .orderBy(getString(R.string.db__dateTime), Query.Direction.ASCENDING).get()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    // for PostListAdapter
+                    val messages: ArrayList<MessageModel> = ArrayList()
+
+                    for (item in task.result!!.documents) {
+                        val message = MessageModel(item.id)
+                        message.isSender =
+                            (item.get(getString(R.string.db__senderId)) as String) == auth.currentUser?.uid.toString()
+                        //model.dateTime = item.get(getString(R.string.db__title)) as String
+                        message.message = item.get(getString(R.string.db__text)) as String
+
+                        // for PostListAdapter
+                        messages.add(message)
+                    }
+
+                    // Update the list of posts
+                    val messagesAdapter = MessagesListAdapter(this, messages)
+                    messageList.adapter = messagesAdapter
+                }
+            }
+    }
+
     @SuppressLint("SimpleDateFormat")
     override fun sendReviewDialog(star: Float) {
         val data = hashMapOf(
             getString(R.string.db__postId) to chat.title,
             getString(R.string.db__reviewer) to auth.currentUser?.uid.toString(),
-            getString(R.string.db__datePosted) to SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Date()),
+            getString(R.string.db__datePosted) to SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(
+                Date()
+            ),
             getString(R.string.db__stars) to star,
         )
-        db.collection(getString(R.string.db_user_reviews)).document(receiver).collection(getString(R.string.db_reviewers))
+        db.collection(getString(R.string.db_user_reviews)).document(receiver)
+            .collection(getString(R.string.db_reviewers))
             .document(UUID.randomUUID().toString())
             .set(data as Map<String, Any>)
     }

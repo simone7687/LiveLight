@@ -19,13 +19,4 @@
             android:layout_height="match_parent"
             android:smoothScrollbar="true" />
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/text_messages"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentEnd="true"
-        android:textSize="20sp"
-        android:visibility="invisible"
-        android:text="@string/no_messages" />
 </RelativeLayout>

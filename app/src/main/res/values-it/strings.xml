@@ -60,6 +60,7 @@
     <!-- Reviews -->
     <string name="user_rating">Valutazione utente</string>
     <string name="currency">Valuta</string>
+    <string name="vote_only_after_use">Poi votare soltanto dopo ave usufruito dell\'articolo.</string>
     <!-- Other -->
     <string name="join_description">Unisciti a noi\nCondividi gli oggetti che non utilizzi</string>
     <string name="close">Chiudi</string>
