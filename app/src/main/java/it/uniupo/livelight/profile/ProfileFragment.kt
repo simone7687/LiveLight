@@ -77,7 +77,6 @@ class ProfileFragment : Fragment() {
             .whereEqualTo(getString(R.string.db__userId), auth.currentUser?.uid.toString()).get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    var countPost = 0
                     // for PostListAdapter
                     val posts: ArrayList<PostModel> = ArrayList()
 
@@ -91,8 +90,6 @@ class ProfileFragment : Fragment() {
 
                         // for PostListAdapter
                         posts.add(model)
-
-                        countPost++
                     }
 
                     // Update the list of posts
@@ -102,7 +99,7 @@ class ProfileFragment : Fragment() {
                         postsAdapter.getItem(position)?.let { viewPost(it) }
                     }
                     // Description of user data
-                    textPostsPosted.text = getString(R.string.posts_posted) + ": " + countPost
+                    textPostsPosted.text = getString(R.string.posts_posted) + ": " + posts.size
                 }
             }.addOnFailureListener { exception ->
                 Toast.makeText(

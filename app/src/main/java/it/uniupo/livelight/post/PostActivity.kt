@@ -258,7 +258,7 @@ class PostActivity : AppCompatActivity(), ApproveFragment.ApproveDialogListener,
         )
         // Send the message
         db.collection(getString(R.string.db_chats)).document(chatID)
-            .collection(getString(R.string.messages))
+            .collection(getString(R.string.db_messages))
             .document(UUID.randomUUID().toString())
             .set(data as Map<String, Any>)
             .addOnSuccessListener {
