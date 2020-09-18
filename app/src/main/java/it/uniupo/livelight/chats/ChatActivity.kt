@@ -6,12 +6,13 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
-import android.widget.ListView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
@@ -31,7 +32,10 @@ class ChatActivity : AppCompatActivity(), ReviewFragment.ReviewDialogListener,
 
     private lateinit var chat: ChatModel
     private var lend = false
-    lateinit var receiver: String
+    private lateinit var receiver: String
+
+    private lateinit var listAdapter: MessagesListAdapter
+    private lateinit var list: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,11 +54,16 @@ class ChatActivity : AppCompatActivity(), ReviewFragment.ReviewDialogListener,
                         title = task.result!!.get(getString(R.string.db__name)) as String
             }
 
-        val l = findViewById<RecyclerView>(R.id.ListView_message)
-        fetchMessages(l, chat.id)
+        // Update messages
+        list = findViewById(R.id.ListView_message)
+        val layoutMgr = LinearLayoutManager(this)
+        layoutMgr.stackFromEnd = true
+        list.layoutManager = layoutMgr
 
+        listAdapter = MessagesListAdapter(this, mutableListOf())
+        list.adapter = listAdapter
 
-
+        updateMessages(list, chat.id)
 
         // Lend button
         val buttonLend = findViewById<Button>(R.id.button_startLend)
@@ -198,32 +207,30 @@ class ChatActivity : AppCompatActivity(), ReviewFragment.ReviewDialogListener,
     }
 
     /**
-     * Fetches all the messages from the current conversation
+     * Fetches the messages
      */
-    private fun fetchMessages(messageList: RecyclerView, chat: String) {
-        db.collection(getString(R.string.db_chats)).document(chat).collection(getString(R.string.db_messages))
-            .orderBy(getString(R.string.db__dateTime), Query.Direction.ASCENDING).get()
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    // for PostListAdapter
-                    val messages: ArrayList<MessageModel> = ArrayList()
+    private fun updateMessages(messageList: RecyclerView, chat: String) {
+        val collection = db.collection(getString(R.string.db_chats)).document(chat)
+            .collection(getString(R.string.db_messages))
+            .orderBy(getString(R.string.db__dateTime), Query.Direction.ASCENDING)
 
-                    for (item in task.result!!.documents) {
-                        val message = MessageModel(item.id)
-                        message.isSender =
-                            (item.get(getString(R.string.db__senderId)) as String) == auth.currentUser?.uid.toString()
-                        //model.dateTime = item.get(getString(R.string.db__title)) as String
-                        message.message = item.get(getString(R.string.db__text)) as String
+        collection.addSnapshotListener { snapshots, e ->
+            if (snapshots != null && e == null) {
+                for (dc in snapshots.documentChanges) {
+                    when (dc.type) {
+                        DocumentChange.Type.ADDED -> {
+                            val textMessage = MessageModel(dc.document.id)
+                            textMessage.message =
+                                dc.document.getString(getString(R.string.db__text)) as String
+                            textMessage.dateTime =
+                                dc.document.getString(getString(R.string.db__dateTime)) as String
 
-                        // for PostListAdapter
-                        messages.add(message)
+                            listAdapter.addMessage(textMessage)
+                        }
                     }
-
-                    // Update the list of posts
-                    val messagesAdapter = MessagesListAdapter(this, messages)
-                    messageList.adapter = messagesAdapter
                 }
             }
+        }
     }
 
     @SuppressLint("SimpleDateFormat")

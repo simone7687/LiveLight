@@ -7,13 +7,17 @@
         android:id="@+id/textView_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginTop="8dp"
         android:layout_gravity="start" />
+
     <TextView
         android:id="@+id/textView_message"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center|start"
-        android:layout_margin="8dp"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginBottom="8dp"
         android:background="@drawable/message_other"
         android:gravity="center|start"
         android:padding="8dp"

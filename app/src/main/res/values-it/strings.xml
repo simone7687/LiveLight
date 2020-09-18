@@ -52,6 +52,7 @@
     <string name="message_sent">Messaggo inviato</string>
     <string name="there_is_already_chat">Hai già iniziato una chat per questo articolo, guarda in Messaggi.</string>
     <string name="no_messages">Non ci cono messaggi. Cosa stai aspettando? Apri un posto e inizia una conversazione.</string>
+    <string name="enter_message">Inserisci il messaggio.</string>
     <!-- Lend -->
     <string name="start_lend">Avviare il prestito</string>
     <string name="end_lend">Terminare il prestito</string>

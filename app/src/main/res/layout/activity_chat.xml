@@ -21,8 +21,8 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/ListView_message"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:scrollbars="vertical" />
     </LinearLayout>
 
@@ -33,7 +33,7 @@
 
         <EditText
             android:id="@+id/txtMessage"
-            android:hint="Enter message"
+            android:hint="@string/enter_message"
             android:background="@android:color/transparent"
             android:layout_gravity="bottom"
             android:layout_marginLeft="16dp"
@@ -45,12 +45,13 @@
 
         <Button
             android:id="@+id/btnSend"
-            android:text="SEND"
-            android:textSize="14dp"
+            android:layout_gravity="bottom"
+            android:focusable="true"
             android:clickable="true"
             android:layout_width="64dp"
             android:layout_height="48dp"
             android:gravity="center"
-            android:layout_gravity="bottom" />
+            android:text="@string/send"
+            android:textSize="14sp" />
     </LinearLayout>
 </RelativeLayout>
