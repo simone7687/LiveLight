@@ -24,11 +24,13 @@ class MessagesListAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         return when (viewType) {
             SENT -> {
-                ViewHolder(LayoutInflater.from(context).inflate(R.layout.message_my, parent, false))
+                ViewHolder(
+                    LayoutInflater.from(context).inflate(R.layout.message_other, parent, false)
+                )
             }
             else -> {
                 ViewHolder(
-                    LayoutInflater.from(context).inflate(R.layout.message_other, parent, false)
+                    LayoutInflater.from(context).inflate(R.layout.message_my, parent, false)
                 )
             }
         }

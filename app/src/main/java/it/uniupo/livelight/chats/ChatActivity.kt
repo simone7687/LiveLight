@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Button
+import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
@@ -36,6 +37,7 @@ class ChatActivity : AppCompatActivity(), ReviewFragment.ReviewDialogListener,
 
     private lateinit var listAdapter: MessagesListAdapter
     private lateinit var list: RecyclerView
+    private lateinit var inputMessage: EditText
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,7 +65,23 @@ class ChatActivity : AppCompatActivity(), ReviewFragment.ReviewDialogListener,
         listAdapter = MessagesListAdapter(this, mutableListOf())
         list.adapter = listAdapter
 
-        updateMessages(list, chat.id)
+        updateMessages(chat.id, receiver)
+
+        inputMessage = findViewById(R.id.txtMessage)
+
+        //Handle send message button click
+        findViewById<Button>(R.id.btnSend).setOnClickListener {
+            if (inputMessage.text.toString().isNotEmpty()) {
+                sendMessage(
+                    inputMessage.text.toString(),
+                    auth.currentUser?.uid.toString(),
+                    receiver,
+                    chat.id
+                )
+                inputMessage.text.clear()
+                // TODO: list.scrollToPosition(listAdapter.itemCount)
+            }
+        }
 
         // Lend button
         val buttonLend = findViewById<Button>(R.id.button_startLend)
@@ -182,20 +200,20 @@ class ChatActivity : AppCompatActivity(), ReviewFragment.ReviewDialogListener,
     }
 
     /**
-     * ................................
+     * Send the message
      */
     @SuppressLint("SimpleDateFormat")
     private fun sendMessage(text: String, sender: String, receiver: String, chatID: String) {
-        // .........
+        // Message data
         val data = hashMapOf(
             getString(R.string.db__text) to text,
             getString(R.string.db__receiverId) to receiver,
             getString(R.string.db__senderId) to sender,
             getString(R.string.db__dateTime) to SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Date())
         )
-        // ................
+        // Send the message
         db.collection(getString(R.string.db_chats)).document(chatID)
-            .collection(getString(R.string.messages))
+            .collection(getString(R.string.db_messages))
             .document(UUID.randomUUID().toString())
             .set(data as Map<String, Any>)
             .addOnFailureListener { exception ->
@@ -207,25 +225,26 @@ class ChatActivity : AppCompatActivity(), ReviewFragment.ReviewDialogListener,
     }
 
     /**
-     * Fetches the messages
+     * Update the messages list
      */
-    private fun updateMessages(messageList: RecyclerView, chat: String) {
+    private fun updateMessages(chat: String, receiver: String) {
         val collection = db.collection(getString(R.string.db_chats)).document(chat)
             .collection(getString(R.string.db_messages))
-            .orderBy(getString(R.string.db__dateTime), Query.Direction.ASCENDING)
+            .orderBy(getString(R.string.db__dateTime), Query.Direction.DESCENDING)
 
         collection.addSnapshotListener { snapshots, e ->
             if (snapshots != null && e == null) {
                 for (dc in snapshots.documentChanges) {
                     when (dc.type) {
                         DocumentChange.Type.ADDED -> {
-                            val textMessage = MessageModel(dc.document.id)
-                            textMessage.message =
+                            val message = MessageModel(dc.document.id)
+                            message.message =
                                 dc.document.getString(getString(R.string.db__text)) as String
-                            textMessage.dateTime =
+                            message.dateTime =
                                 dc.document.getString(getString(R.string.db__dateTime)) as String
+                            message.isSender = (receiver == auth.currentUser?.uid.toString())
 
-                            listAdapter.addMessage(textMessage)
+                            listAdapter.addMessage(message)
                         }
                     }
                 }
