@@ -90,9 +90,7 @@ class PostPublisherActivity : AppCompatActivity() {
                 categorySelected = p2
             }
 
-            override fun onNothingSelected(p0: AdapterView<*>?) {
-                TODO("Not yet implemented")
-            }
+            override fun onNothingSelected(p0: AdapterView<*>?) {}
         }
 
         button_publish.setOnClickListener {
@@ -214,8 +212,14 @@ class PostPublisherActivity : AppCompatActivity() {
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_GALLERY && data != null) {
             // Inserts the image and makes it visible
             image_view.setImageURI(data.data)
-            image_view.visibility = View.VISIBLE
-            image = data.data!!
+            if (image_view.getDrawable() != null) {
+                image_view.visibility = View.VISIBLE
+                image = data.data!!
+            } else
+                Toast.makeText(
+                    baseContext, getString(R.string.invalid_image),
+                    Toast.LENGTH_SHORT
+                ).show()
         }
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_CAMERA && data != null) {
             image_view.setImageBitmap(data.extras?.get("data") as Bitmap)
@@ -316,8 +320,6 @@ class PostPublisherActivity : AppCompatActivity() {
         lastLocation: Location,
         imagePath: Uri
     ) {
-        // TODO: Check if it is an image
-
         // TODO: update Loading Activity: Upload Image
 
         // Generate the name file: "use id"_"random ID"

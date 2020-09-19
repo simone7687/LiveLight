@@ -48,6 +48,7 @@
     <string name="image_upload_error">There was an error while loading the image.</string>
     <string name="permission_denied">Permission denied</string>
     <string name="loading_completed">Loading completed</string>
+    <string name="invalid_image">The image you selected is invalid.</string>
     <!-- Login & Registration -->
     <string name="login">Login</string>
     <string name="not_registered">Not registered yet?</string>
