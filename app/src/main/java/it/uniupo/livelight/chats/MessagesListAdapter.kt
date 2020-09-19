@@ -25,12 +25,12 @@ class MessagesListAdapter(
         return when (viewType) {
             SENT -> {
                 ViewHolder(
-                    LayoutInflater.from(context).inflate(R.layout.message_other, parent, false)
+                    LayoutInflater.from(context).inflate(R.layout.message_my, parent, false)
                 )
             }
             else -> {
                 ViewHolder(
-                    LayoutInflater.from(context).inflate(R.layout.message_my, parent, false)
+                    LayoutInflater.from(context).inflate(R.layout.message_other, parent, false)
                 )
             }
         }

@@ -81,6 +81,7 @@ class ChatsFragment : Fragment() {
         else
             intent.putExtra("chat_receiver_user", chat.users[0])
         intent.putExtra("chat_title", chat.title)
+        intent.putExtra("chat_owner_user", chat.owner)
         startActivity(intent)
     }
 }

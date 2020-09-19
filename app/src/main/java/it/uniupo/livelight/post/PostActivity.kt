@@ -254,7 +254,7 @@ class PostActivity : AppCompatActivity(), ApproveFragment.ApproveDialogListener,
             getString(R.string.db__text) to text,
             getString(R.string.db__receiverId) to receiver,
             getString(R.string.db__senderId) to sender,
-            getString(R.string.db__dateTime) to SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Date())
+            getString(R.string.db__dateTime) to SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Date())
         )
         // Send the message
         db.collection(getString(R.string.db_chats)).document(chatID)

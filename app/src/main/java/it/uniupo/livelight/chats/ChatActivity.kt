@@ -1,7 +1,10 @@
 package it.uniupo.livelight.chats
 
 import android.annotation.SuppressLint
+import android.content.ClipData
+import android.opengl.Visibility
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -34,6 +37,7 @@ class ChatActivity : AppCompatActivity(), ReviewFragment.ReviewDialogListener,
     private lateinit var chat: ChatModel
     private var lend = false
     private lateinit var receiver: String
+    private lateinit var owner: String
 
     private lateinit var listAdapter: MessagesListAdapter
     private lateinit var list: RecyclerView
@@ -47,6 +51,7 @@ class ChatActivity : AppCompatActivity(), ReviewFragment.ReviewDialogListener,
         chat = ChatModel(intent.getStringExtra("chat_id").toString())
         chat.title = intent.getStringExtra("chat_title").toString()
         receiver = intent.getStringExtra("chat_receiver_user").toString()
+        owner = intent.getStringExtra("chat_owner_user").toString()
 
         // Title
         db.collection(getString(R.string.db_user_details)).document(receiver).get()
@@ -69,7 +74,7 @@ class ChatActivity : AppCompatActivity(), ReviewFragment.ReviewDialogListener,
 
         inputMessage = findViewById(R.id.txtMessage)
 
-        //Handle send message button click
+        // Send the message
         findViewById<Button>(R.id.btnSend).setOnClickListener {
             if (inputMessage.text.toString().isNotEmpty()) {
                 sendMessage(
@@ -79,9 +84,25 @@ class ChatActivity : AppCompatActivity(), ReviewFragment.ReviewDialogListener,
                     chat.id
                 )
                 inputMessage.text.clear()
-                // TODO: list.scrollToPosition(listAdapter.itemCount)
+                list.scrollToPosition(listAdapter.itemCount - 1)
             }
         }
+        inputMessage.setOnKeyListener(View.OnKeyListener { v, keyCode, event ->
+            if (keyCode == KeyEvent.KEYCODE_ENTER) {
+                if (inputMessage.text.toString().isNotEmpty()) {
+                    sendMessage(
+                        inputMessage.text.toString(),
+                        auth.currentUser?.uid.toString(),
+                        receiver,
+                        chat.id
+                    )
+                    inputMessage.text.clear()
+                    list.scrollToPosition(listAdapter.itemCount) // TODO:
+                }
+                return@OnKeyListener true
+            }
+            false
+        })
 
         // Lend button
         val buttonLend = findViewById<Button>(R.id.button_startLend)
@@ -100,7 +121,7 @@ class ChatActivity : AppCompatActivity(), ReviewFragment.ReviewDialogListener,
                 }
             }
         // Lend button Settings
-        if (auth.currentUser?.uid.toString() == receiver) {
+        if (auth.currentUser?.uid.toString() == owner) {
             buttonLend?.visibility = View.VISIBLE
             buttonLend?.setOnClickListener {
                 if (!lend) {
@@ -132,14 +153,19 @@ class ChatActivity : AppCompatActivity(), ReviewFragment.ReviewDialogListener,
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         super.onOptionsItemSelected(item)
+        val v: String
+        if (owner != receiver)
+            v = owner + receiver
+        else
+            v =  receiver + auth.currentUser?.uid.toString()
         when (item.itemId) {
             R.id.item_review -> {
                 db.collection(getString(R.string.db_lend))
-                    .document(auth.currentUser?.uid.toString() + receiver).get()
+                    .document(v).get()
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            val endDate = task.result?.getString(getString(R.string.end_lend))
-                            if (!endDate.isNullOrEmpty()) {
+                            val endDate = (task.result?.get(getString(R.string.db__dateEnd))).toString()
+                            if (endDate != "null") {
                                 val fm: FragmentManager = supportFragmentManager
                                 val reviewDialog = ReviewFragment()
                                 val b = Bundle()
@@ -150,7 +176,7 @@ class ChatActivity : AppCompatActivity(), ReviewFragment.ReviewDialogListener,
                             } else {
                                 Toast.makeText(
                                     this,
-                                    R.string.there_is_already_chat,
+                                    R.string.vote_only_after_use,
                                     Toast.LENGTH_SHORT
                                 ).show()
                             }
@@ -189,7 +215,7 @@ class ChatActivity : AppCompatActivity(), ReviewFragment.ReviewDialogListener,
     @SuppressLint("SimpleDateFormat")
     private fun endLend(receiver: String, buttonLend: Button) {
         val data = hashMapOf(
-            getString(R.string.end_lend) to SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Date())
+            getString(R.string.db__dateEnd) to SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Date())
         )
 
         db.collection(getString(R.string.db_lend))
@@ -209,7 +235,7 @@ class ChatActivity : AppCompatActivity(), ReviewFragment.ReviewDialogListener,
             getString(R.string.db__text) to text,
             getString(R.string.db__receiverId) to receiver,
             getString(R.string.db__senderId) to sender,
-            getString(R.string.db__dateTime) to SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(Date())
+            getString(R.string.db__dateTime) to SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(Date())
         )
         // Send the message
         db.collection(getString(R.string.db_chats)).document(chatID)
@@ -230,7 +256,7 @@ class ChatActivity : AppCompatActivity(), ReviewFragment.ReviewDialogListener,
     private fun updateMessages(chat: String, receiver: String) {
         val collection = db.collection(getString(R.string.db_chats)).document(chat)
             .collection(getString(R.string.db_messages))
-            .orderBy(getString(R.string.db__dateTime), Query.Direction.DESCENDING)
+            .orderBy(getString(R.string.db__dateTime), Query.Direction.ASCENDING)
 
         collection.addSnapshotListener { snapshots, e ->
             if (snapshots != null && e == null) {
@@ -242,7 +268,8 @@ class ChatActivity : AppCompatActivity(), ReviewFragment.ReviewDialogListener,
                                 dc.document.getString(getString(R.string.db__text)) as String
                             message.dateTime =
                                 dc.document.getString(getString(R.string.db__dateTime)) as String
-                            message.isSender = (receiver == auth.currentUser?.uid.toString())
+                            val senderId = dc.document.getString(getString(R.string.db__senderId)) as String
+                            message.isSender = (senderId == auth.currentUser?.uid.toString())
 
                             listAdapter.addMessage(message)
                         }
@@ -257,7 +284,7 @@ class ChatActivity : AppCompatActivity(), ReviewFragment.ReviewDialogListener,
         val data = hashMapOf(
             getString(R.string.db__postId) to chat.title,
             getString(R.string.db__reviewer) to auth.currentUser?.uid.toString(),
-            getString(R.string.db__datePosted) to SimpleDateFormat("dd/MM/yyyy HH:mm:ss").format(
+            getString(R.string.db__datePosted) to SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(
                 Date()
             ),
             getString(R.string.db__stars) to star,
