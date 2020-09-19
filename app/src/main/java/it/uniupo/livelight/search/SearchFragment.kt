@@ -13,6 +13,7 @@ import android.widget.ListView
 import android.widget.Toast
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.Fragment
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
@@ -36,6 +37,7 @@ class SearchFragment : Fragment() {
     private var lastLocation: Location? = null
     private lateinit var list: ListView
     private var search_text: String? = null
+    private var swipeContainer: SwipeRefreshLayout? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -60,6 +62,27 @@ class SearchFragment : Fragment() {
         }
 
         updatePostList(root.findViewById(R.id.list_post), distanceSelected, lastLocation)
+
+        // Lookup the swipe container view
+        swipeContainer = root.findViewById(R.id.swipeContainer) as SwipeRefreshLayout
+        // Setup refresh listener which triggers new data loading
+        swipeContainer!!.setOnRefreshListener {
+            // Make sure you call swipeContainer.setRefreshing(false)
+            // once the network request has completed successfully.
+            updatePostList(
+                list,
+                distanceSelected,
+                lastLocation,
+                search_text
+            )
+        }
+        // Configure the refreshing colors
+        swipeContainer!!.setColorSchemeResources(
+            android.R.color.holo_blue_bright,
+            android.R.color.holo_green_light,
+            android.R.color.holo_orange_light,
+            android.R.color.holo_red_light
+        )
 
         return root
     }
@@ -126,6 +149,7 @@ class SearchFragment : Fragment() {
                     )
                 }
             }.addOnFailureListener { exception ->
+                swipeContainer?.isRefreshing = false
                 Toast.makeText(
                     activity?.baseContext, exception.localizedMessage,
                     Toast.LENGTH_SHORT
@@ -162,6 +186,7 @@ class SearchFragment : Fragment() {
                     )
                 }
             }.addOnFailureListener { exception ->
+                swipeContainer?.isRefreshing = false
                 Toast.makeText(
                     activity?.baseContext, exception.localizedMessage,
                     Toast.LENGTH_SHORT
@@ -231,6 +256,7 @@ class SearchFragment : Fragment() {
         postList.setOnItemClickListener { parent, view, position, id ->
             postsAdapter.getItem(position)?.let { viewPost(it) }
         }
+        swipeContainer?.isRefreshing = false
     }
 
     fun viewPost(post: PostModel) {

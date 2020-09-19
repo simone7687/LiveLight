@@ -10,6 +10,7 @@ import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
@@ -24,6 +25,7 @@ import it.uniupo.livelight.post.PostModel
 class ProfileFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseFirestore
+    private var swipeContainer: SwipeRefreshLayout? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,6 +44,25 @@ class ProfileFragment : Fragment() {
         updateUserPostList(
             root.findViewById(R.id.list_user_post)!!,
             root.findViewById(R.id.textView_posts_posted)
+        )
+
+        // Lookup the swipe container view
+        swipeContainer = root.findViewById(R.id.swipeContainer) as SwipeRefreshLayout
+        // Setup refresh listener which triggers new data loading
+        swipeContainer!!.setOnRefreshListener {
+            // Make sure you call swipeContainer.setRefreshing(false)
+            // once the network request has completed successfully.
+            updateUserPostList(
+                root.findViewById(R.id.list_user_post)!!,
+                root.findViewById(R.id.textView_posts_posted)
+            )
+        }
+        // Configure the refreshing colors
+        swipeContainer!!.setColorSchemeResources(
+            android.R.color.holo_blue_bright,
+            android.R.color.holo_green_light,
+            android.R.color.holo_orange_light,
+            android.R.color.holo_red_light
         )
 
         return root
@@ -100,12 +121,14 @@ class ProfileFragment : Fragment() {
                     }
                     // Description of user data
                     textPostsPosted.text = getString(R.string.posts_posted) + ": " + posts.size
+                    swipeContainer?.isRefreshing = false
                 }
             }.addOnFailureListener { exception ->
                 Toast.makeText(
                     activity?.baseContext, exception.localizedMessage,
                     Toast.LENGTH_SHORT
                 ).show()
+                swipeContainer?.isRefreshing = false
             }
     }
 

@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import android.widget.ListView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import it.uniupo.livelight.R
@@ -15,6 +16,7 @@ import it.uniupo.livelight.R
 class ChatsFragment : Fragment() {
     private val db = FirebaseFirestore.getInstance()
     private val auth = FirebaseAuth.getInstance()
+    private var swipeContainer: SwipeRefreshLayout? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -29,6 +31,22 @@ class ChatsFragment : Fragment() {
         if (root.findViewById<ListView>(R.id.list_chats).size == 0) {
             root.findViewById<TextView>(R.id.text_messages).visibility = View.VISIBLE
         }*/
+
+        // Lookup the swipe container view
+        swipeContainer = root.findViewById(R.id.swipeContainer) as SwipeRefreshLayout
+        // Setup refresh listener which triggers new data loading
+        swipeContainer!!.setOnRefreshListener {
+            // Make sure you call swipeContainer.setRefreshing(false)
+            // once the network request has completed successfully.
+            getChatsList(root.findViewById(R.id.list_chats))
+        }
+        // Configure the refreshing colors
+        swipeContainer!!.setColorSchemeResources(
+            android.R.color.holo_blue_bright,
+            android.R.color.holo_green_light,
+            android.R.color.holo_orange_light,
+            android.R.color.holo_red_light
+        )
 
         return root
     }
@@ -62,8 +80,10 @@ class ChatsFragment : Fragment() {
                     chatssList.setOnItemClickListener { parent, view, position, id ->
                         conversationsAdapter.getItem(position)?.let { openChat(it) }
                     }
+                    swipeContainer?.isRefreshing = false
                 }
             }.addOnFailureListener { exception ->
+                swipeContainer?.isRefreshing = false
                 Toast.makeText(
                     activity?.baseContext,
                     exception.localizedMessage,
