@@ -84,6 +84,12 @@ class SearchFragment : Fragment() {
                 // Got last known location
                 if (location != null) {
                     lastLocation = location
+                    updatePostList(
+                        list,
+                        distanceSelected,
+                        lastLocation,
+                        search_text
+                    )
                 } else if (distanceSelected != 0)
                     Toast.makeText(
                         activity?.baseContext, R.string.no_location,
@@ -91,14 +97,6 @@ class SearchFragment : Fragment() {
                     ).show()
             }
         }
-        // Update the list
-        if (lastLocation != null)
-            updatePostList(
-                list,
-                distanceSelected,
-                lastLocation,
-                search_text
-            )
     }
 
     /**
