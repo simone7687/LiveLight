@@ -9,6 +9,7 @@ import android.graphics.Bitmap
 import android.location.Location
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.view.View
 import android.widget.AdapterView
@@ -17,12 +18,14 @@ import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider.getUriForFile
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import it.uniupo.livelight.R
 import kotlinx.android.synthetic.main.activity_post_publisher.*
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -163,6 +166,9 @@ class PostPublisherActivity : AppCompatActivity() {
      */
     private fun openCameraForImage() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        val file = File(Environment.getExternalStorageDirectory(), "MyPhoto.jpg")
+        image = getUriForFile(this, this.applicationContext.packageName + ".provider", file)
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, image)
         startActivityForResult(intent, REQUEST_CODE_CAMERA)
     }
 
@@ -223,6 +229,11 @@ class PostPublisherActivity : AppCompatActivity() {
         }
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_CAMERA && data != null) {
             image_view.setImageBitmap(data.extras?.get("data") as Bitmap)
+            //File object of camera image
+            val file = File(Environment.getExternalStorageDirectory(), "MyPhoto.jpg")
+            //Uri of camera image
+            image = getUriForFile(this, this.applicationContext.packageName + ".provider", file)
+            image_view.setImageURI(image)
             image_view.visibility = View.VISIBLE
         }
     }
