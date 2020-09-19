@@ -3,10 +3,14 @@ package it.uniupo.livelight.post
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.location.Location
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -25,6 +29,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import it.uniupo.livelight.R
+import it.uniupo.livelight.dialog.ErrorActivity
 import it.uniupo.livelight.dialog.ProcessFragment
 import kotlinx.android.synthetic.main.activity_post_publisher.*
 import java.io.File
@@ -439,5 +444,29 @@ class PostPublisherActivity : AppCompatActivity() {
                 processDialog.dismissDialog()
                 Toast.makeText(this, exception.localizedMessage, Toast.LENGTH_SHORT).show()
             }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // If it is not connected to the internet it opens an error message
+        registerReceiver(broadcastReceiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
+    }
+
+    /**
+     * If it is not connected to the internet it opens an error message
+     */
+    private var broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val notConnected =
+                intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false)
+            if (notConnected) {
+                val intent = Intent(this@PostPublisherActivity, ErrorActivity::class.java)
+                intent.putExtra("popuptitle", getString(R.string.error))
+                intent.putExtra("popuptext", getString(R.string.must_connected_internet_use_app))
+                intent.putExtra("popupbtn", getString(R.string.ok))
+                intent.putExtra("darkstatusbar", false)
+                startActivity(intent)
+            }
+        }
     }
 }

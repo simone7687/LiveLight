@@ -13,6 +13,8 @@
     <string name="permission_denied">Permesso negato</string>
     <string name="loading_completed">Caricamento Completato</string>
     <string name="invalid_image">L\'immagine selezionata non è valida.</string>
+    <string name="error">Errore</string>
+    <string name="must_connected_internet_use_app">Devi essere connesso a internet per usare l\'app.</string>
     <!-- Loading -->
     <string name="loading_post">Caricamento del post</string>
     <string name="loading...">Caricamento…</string>
@@ -83,4 +85,5 @@
     <string name="hi">Ciao</string>
     <string name="map">Mappa</string>
     <string name="delete">Elimina</string>
+    <string name="ok">OK</string>
 </resources>
