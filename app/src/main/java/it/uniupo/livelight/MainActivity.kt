@@ -1,6 +1,10 @@
 package it.uniupo.livelight
 
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -12,6 +16,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.auth.FirebaseAuth
+import it.uniupo.livelight.dialog.ErrorActivity
 import it.uniupo.livelight.login.LoginActivity
 import it.uniupo.livelight.post.PostPublisherActivity
 
@@ -37,8 +42,8 @@ class MainActivity : AppCompatActivity() {
         val navView: BottomNavigationView = findViewById(R.id.nav_view)
 
         val navController = findNavController(R.id.nav_host_fragment)
-        // Passing each menu ID as a set of Ids because each
-        // menu should be considered as top level destinations.
+        // Passing each bar_main_menu ID as a set of Ids because each
+        // bar_main_menu should be considered as top level destinations.
         val appBarConfiguration = AppBarConfiguration(
             setOf(
                 R.id.navigation_profile,
@@ -51,7 +56,6 @@ class MainActivity : AppCompatActivity() {
 
         // Handle Floating Action Button
         findViewById<FloatingActionButton>(R.id.fab)?.setOnClickListener {
-            // TODO: If there is no connection it does not open the activity 
             val intent = Intent(this, PostPublisherActivity()::class.java)
             startActivity(intent)
         }
@@ -68,10 +72,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     /**
-     * Adds the menu "with 3 dots"
+     * Adds the bar_main_menu "with 3 dots"
      */
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.menu, menu)
+        menuInflater.inflate(R.menu.bar_main_menu, menu)
         return true
     }
 
@@ -86,6 +90,30 @@ class MainActivity : AppCompatActivity() {
             }
         }
         return true
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // If it is not connected to the internet it opens an error message
+        registerReceiver(broadcastReceiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
+    }
+
+    /**
+     * If it is not connected to the internet it opens an error message
+     */
+    private var broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val notConnected =
+                intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false)
+            if (notConnected) {
+                val intent = Intent(this@MainActivity, ErrorActivity::class.java)
+                intent.putExtra("popuptitle", getString(R.string.error))
+                intent.putExtra("popuptext", getString(R.string.must_connected_internet_use_app))
+                intent.putExtra("popupbtn", getString(R.string.ok))
+                intent.putExtra("darkstatusbar", false)
+                startActivity(intent)
+            }
+        }
     }
 
     /**

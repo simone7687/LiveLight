@@ -8,9 +8,11 @@ import android.text.method.PasswordTransformationMethod
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentManager
 import com.google.firebase.auth.FirebaseAuth
 import it.uniupo.livelight.MainActivity
 import it.uniupo.livelight.R
+import it.uniupo.livelight.dialog.ProcessFragment
 import kotlinx.android.synthetic.main.activity_login.*
 
 /**
@@ -19,6 +21,7 @@ import kotlinx.android.synthetic.main.activity_login.*
 class LoginActivity : AppCompatActivity(), View.OnClickListener {
 
     private lateinit var auth: FirebaseAuth
+    private val processDialog = ProcessFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,12 +59,14 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                     return
                 }
 
-                // TODO: start Loading Activity
+                val fm: FragmentManager = supportFragmentManager
+                val b = Bundle()
+                processDialog.arguments = b
+                processDialog.isCancelable = false
+                processDialog.show(fm, "fragment_process")
 
                 // authentication with email and password
                 login(editText_email.text.toString(), editText_password.text.toString())
-
-                // TODO: close Loading Activity
             }
             R.id.button_registration -> {
                 // navigate to RegistrationActivity
@@ -79,11 +84,13 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
     private fun login(email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password)
             .addOnSuccessListener(this) {
+                processDialog.dismissDialog()
                 // navigate to MainActivity
                 val intentMain = Intent(this, MainActivity::class.java)
                 startActivity(intentMain)
                 finish()
             }.addOnFailureListener { exception ->
+                processDialog.dismissDialog()
                 Toast.makeText(
                     baseContext, exception.localizedMessage,
                     Toast.LENGTH_SHORT

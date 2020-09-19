@@ -1,6 +1,7 @@
 package it.uniupo.livelight.profile
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -9,10 +10,12 @@ import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import it.uniupo.livelight.R
+import it.uniupo.livelight.post.PostActivity
 import it.uniupo.livelight.post.PostListAdapter
 import it.uniupo.livelight.post.PostModel
 
@@ -22,6 +25,7 @@ import it.uniupo.livelight.post.PostModel
 class ProfileFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseFirestore
+    private var swipeContainer: SwipeRefreshLayout? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -40,6 +44,25 @@ class ProfileFragment : Fragment() {
         updateUserPostList(
             root.findViewById(R.id.list_user_post)!!,
             root.findViewById(R.id.textView_posts_posted)
+        )
+
+        // Lookup the swipe container view
+        swipeContainer = root.findViewById(R.id.swipeContainer) as SwipeRefreshLayout
+        // Setup refresh listener which triggers new data loading
+        swipeContainer!!.setOnRefreshListener {
+            // Make sure you call swipeContainer.setRefreshing(false)
+            // once the network request has completed successfully.
+            updateUserPostList(
+                root.findViewById(R.id.list_user_post)!!,
+                root.findViewById(R.id.textView_posts_posted)
+            )
+        }
+        // Configure the refreshing colors
+        swipeContainer!!.setColorSchemeResources(
+            android.R.color.holo_blue_bright,
+            android.R.color.holo_green_light,
+            android.R.color.holo_orange_light,
+            android.R.color.holo_red_light
         )
 
         return root
@@ -75,43 +98,49 @@ class ProfileFragment : Fragment() {
             .whereEqualTo(getString(R.string.db__userId), auth.currentUser?.uid.toString()).get()
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    var countPost = 0
                     // for PostListAdapter
-                    val titlePost: ArrayList<String> = ArrayList()
-                    val descriptionPost: ArrayList<String> = ArrayList()
-                    val imagePost: ArrayList<String> = ArrayList()
+                    val posts: ArrayList<PostModel> = ArrayList()
 
                     for (item in task.result!!.documents) {
                         val model = PostModel(item.id)
                         model.user = item.get(getString(R.string.db__userId)) as String
                         model.title = item.get(getString(R.string.db__title)) as String
                         model.description = item.get(getString(R.string.db__description)) as String
+                        model.datePosted = item.get(getString(R.string.db__datePosted)) as String
                         model.image = item.get(getString(R.string.db__imageUrl)) as String
 
                         // for PostListAdapter
-                        titlePost.add(model.title)
-                        descriptionPost.add(model.description)
-                        imagePost.add(model.image)
-
-                        countPost++
+                        posts.add(model)
                     }
 
                     // Update the list of posts
-                    postList.adapter =
-                        PostListAdapter(
-                            this.requireActivity(),
-                            titlePost,
-                            descriptionPost,
-                            imagePost
-                        )
+                    val postsAdapter = PostListAdapter(this.requireActivity(), posts)
+                    postList.adapter = postsAdapter
+                    postList.setOnItemClickListener { parent, view, position, id ->
+                        postsAdapter.getItem(position)?.let { viewPost(it) }
+                    }
                     // Description of user data
-                    textPostsPosted.text = getString(R.string.posts_posted) + ": " + countPost
+                    textPostsPosted.text = getString(R.string.posts_posted) + ": " + posts.size
+                    swipeContainer?.isRefreshing = false
                 }
             }.addOnFailureListener { exception ->
                 Toast.makeText(
                     activity?.baseContext, exception.localizedMessage,
                     Toast.LENGTH_SHORT
                 ).show()
+                swipeContainer?.isRefreshing = false
             }
+    }
+
+    fun viewPost(post: PostModel) {
+        val aa = PostActivity()
+        val intent = Intent(activity, aa::class.java)
+        intent.putExtra("post_id", post.id)
+        intent.putExtra("post_user", post.user)
+        intent.putExtra("post_title", post.title)
+        intent.putExtra("post_description", post.description)
+        intent.putExtra("post_datePosted", post.datePosted)
+        intent.putExtra("post_image", post.image)
+        startActivity(intent)
     }
 }

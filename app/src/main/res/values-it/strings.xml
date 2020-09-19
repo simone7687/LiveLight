@@ -12,6 +12,12 @@
     <string name="image_upload_error">Si è verificato un errore durante il caricamento dell\'immagine.</string>
     <string name="permission_denied">Permesso negato</string>
     <string name="loading_completed">Caricamento Completato</string>
+    <string name="invalid_image">L\'immagine selezionata non è valida.</string>
+    <string name="error">Errore</string>
+    <string name="must_connected_internet_use_app">Devi essere connesso a internet per usare l\'app.</string>
+    <!-- Loading -->
+    <string name="loading_post">Caricamento del post</string>
+    <string name="loading...">Caricamento…</string>
     <!-- Login & Registration -->
     <string name="login">Accedi</string>
     <string name="not_registered">Non sei ancora registrato?</string>
@@ -36,6 +42,32 @@
     <!-- Post Publisher -->
     <string name="new_post">Nuovo post</string>
     <string name="publish_post_description">Pubblica un nuvo post</string>
+    <!-- Post Activity -->
+    <string name="description_title">Descrizione:</string>
+    <string name="date_posted_title">Postato il:</string>
+    <string name="distance_title">Dista:</string>
+    <string name="user_title">Postato da:</string>
+    <!-- Dialog -->
+    <string name="delete_post">Elimina post</string>
+    <string name="do_you_want_delete_post">Sei sicuro di eliminare il post?</string>
+    <string name="write_here">Scrivi qui</string>
+    <string name="post_deleted">Il post è stato eliminato</string>
+    <!-- Message -->
+    <string name="send">Invia</string>
+    <string name="message">Messagio</string>
+    <string name="message_sent">Messaggo inviato</string>
+    <string name="there_is_already_chat">Hai già iniziato una chat per questo articolo, guarda in Messaggi.</string>
+    <string name="no_messages">Non ci cono messaggi. Cosa stai aspettando? Apri un post e inizia una conversazione.</string>
+    <string name="enter_message">Inserisci il messaggio.</string>
+    <!-- Lend -->
+    <string name="start_lend">Avviare il prestito</string>
+    <string name="end_lend">Terminare il prestito</string>
+    <string name="lend_article">Presta articolo</string>
+    <string name="are_sure_lend_your_article">Sei sicuro di voler prestare il tuo articolo?</string>
+    <!-- Reviews -->
+    <string name="user_rating">Valutazione utente</string>
+    <string name="currency">Valuta</string>
+    <string name="vote_only_after_use">Poi votare soltanto dopo ave usufruito dell\'articolo.</string>
     <!-- Other -->
     <string name="join_description">Unisciti a noi\nCondividi gli oggetti che non utilizzi</string>
     <string name="close">Chiudi</string>
@@ -49,7 +81,9 @@
     <string name="take_photo">Scatta una foto</string>
     <string name="publish">Pubblica</string>
     <string name="posts_posted">Post caricati</string>
-    <string name="uploading_progress">Caricamento in corso…</string>
+    <string name="loading_progress">Caricamento in corso…</string>
     <string name="hi">Ciao</string>
     <string name="map">Mappa</string>
+    <string name="delete">Elimina</string>
+    <string name="ok">OK</string>
 </resources>

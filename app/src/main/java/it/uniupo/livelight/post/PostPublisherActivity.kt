@@ -3,12 +3,17 @@ package it.uniupo.livelight.post
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.DatePickerDialog
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.location.Location
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.view.View
 import android.widget.AdapterView
@@ -17,12 +22,18 @@ import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider.getUriForFile
+import androidx.fragment.app.FragmentManager
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import it.uniupo.livelight.R
+import it.uniupo.livelight.dialog.ErrorActivity
+import it.uniupo.livelight.dialog.ProcessFragment
 import kotlinx.android.synthetic.main.activity_post_publisher.*
+import java.io.File
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -38,8 +49,10 @@ class PostPublisherActivity : AppCompatActivity() {
     private val REQUEST_CODE_CAMERA = 200
     private val REQUEST_CODE_LOCATION = 300
 
-    private lateinit var image: Uri
+    private var image: Uri? = null
     private var categorySelected: Int = 0
+
+    private val processDialog = ProcessFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,12 +102,17 @@ class PostPublisherActivity : AppCompatActivity() {
                 categorySelected = p2
             }
 
-            override fun onNothingSelected(p0: AdapterView<*>?) {
-                TODO("Not yet implemented")
-            }
+            override fun onNothingSelected(p0: AdapterView<*>?) {}
         }
 
         button_publish.setOnClickListener {
+            val fm: FragmentManager = supportFragmentManager
+            val b = Bundle()
+            b.putInt("text_progress", R.string.loading_post) // TODO:
+            processDialog.arguments = b
+            processDialog.isCancelable = false
+            processDialog.show(fm, "fragment_process")
+
             publishPostWhichFields()
         }
 
@@ -164,6 +182,9 @@ class PostPublisherActivity : AppCompatActivity() {
      */
     private fun openCameraForImage() {
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        val file = File(Environment.getExternalStorageDirectory(), "MyPhoto.jpg")
+        image = getUriForFile(this, this.applicationContext.packageName + ".provider", file)
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, image)
         startActivityForResult(intent, REQUEST_CODE_CAMERA)
     }
 
@@ -213,11 +234,22 @@ class PostPublisherActivity : AppCompatActivity() {
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_GALLERY && data != null) {
             // Inserts the image and makes it visible
             image_view.setImageURI(data.data)
-            image_view.visibility = View.VISIBLE
-            image = data.data!!
+            if (image_view.getDrawable() != null) {
+                image_view.visibility = View.VISIBLE
+                image = data.data!!
+            } else
+                Toast.makeText(
+                    baseContext, getString(R.string.invalid_image),
+                    Toast.LENGTH_SHORT
+                ).show()
         }
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_CAMERA && data != null) {
             image_view.setImageBitmap(data.extras?.get("data") as Bitmap)
+            //File object of camera image
+            val file = File(Environment.getExternalStorageDirectory(), "MyPhoto.jpg")
+            //Uri of camera image
+            image = getUriForFile(this, this.applicationContext.packageName + ".provider", file)
+            image_view.setImageURI(image)
             image_view.visibility = View.VISIBLE
         }
     }
@@ -252,7 +284,7 @@ class PostPublisherActivity : AppCompatActivity() {
      * Returns false if it finds an empty field and sends a message
      */
     private fun checkEmptyFields(): Boolean {
-        if (editText_title.text.isNullOrEmpty() || textView_description.text.isNullOrEmpty() || editTextDate.text.isNullOrEmpty() || image.toString()
+        if (editText_title.text.isNullOrEmpty() || textView_description.text.isNullOrEmpty() || editTextDate.text.isNullOrEmpty() || image == null || image.toString()
                 .isEmpty() || categorySelected == 0
         ) {
             Toast.makeText(
@@ -269,8 +301,6 @@ class PostPublisherActivity : AppCompatActivity() {
      * Aggregate loading status with a Loading Activity
      */
     private fun publishPostWhichFields() {
-        // TODO: update Loading Activity: Loading in progress
-
         if (checkEmptyFields()) {
             // Requests location permission
             if (ContextCompat.checkSelfPermission(
@@ -285,7 +315,7 @@ class PostPublisherActivity : AppCompatActivity() {
             val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
             fusedLocationClient!!.lastLocation
                 .addOnCompleteListener(this) { task ->
-                    if (task.isSuccessful && task.result != null) {
+                    if (task.isSuccessful && task.result != null && image != null) {
                         // Publication through local image
                         publishPostWhichLocalImage(
                             editText_title.text.toString(),
@@ -293,13 +323,15 @@ class PostPublisherActivity : AppCompatActivity() {
                             editTextDate.text.toString(),
                             categorySelected,
                             task.result!!,
-                            image
+                            image!!
                         )
                     } else {
-                        // TODO: close Loading Activity
+                        processDialog.dismissDialog()
                         Toast.makeText(this, R.string.no_location, Toast.LENGTH_SHORT).show()
                     }
                 }
+        } else {
+            processDialog.dismissDialog()
         }
     }
 
@@ -315,10 +347,6 @@ class PostPublisherActivity : AppCompatActivity() {
         lastLocation: Location,
         imagePath: Uri
     ) {
-        // TODO: Check if it is an image
-
-        // TODO: update Loading Activity: Upload Image
-
         // Generate the name file: "use id"_"random ID"
         val path =
             storage.reference.child(getString(R.string.storage_folder_post_images) + auth.currentUser!!.uid + "_" + UUID.randomUUID())
@@ -348,6 +376,7 @@ class PostPublisherActivity : AppCompatActivity() {
                     )
                 }
             } else {
+                processDialog.dismissDialog()
                 Toast.makeText(
                     this,
                     getString(R.string.image_upload_error),
@@ -361,6 +390,7 @@ class PostPublisherActivity : AppCompatActivity() {
      * Publish the post
      * Aggregate loading status with a Loading Activity
      */
+    @SuppressLint("SimpleDateFormat")
     private fun publishPostWhichServerImage(
         title: String,
         description: String,
@@ -369,14 +399,14 @@ class PostPublisherActivity : AppCompatActivity() {
         lastLocation: Location,
         image: Uri
     ) {
-        // TODO: start Loading Activity: Loading in progress
-
         // Check the parameters 
         if (image.toString().isEmpty()) {
+            processDialog.dismissDialog()
             Toast.makeText(this, R.string.image_upload_error, Toast.LENGTH_SHORT).show()
             return
         }
         if (title.isEmpty() || description.isEmpty() || editTextDate.text.isNullOrEmpty() || categorySelected == 0) {
+            processDialog.dismissDialog()
             Toast.makeText(
                 baseContext, getString(R.string.empty_input_field),
                 Toast.LENGTH_SHORT
@@ -384,6 +414,7 @@ class PostPublisherActivity : AppCompatActivity() {
             return
         }
 
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm:ss")
         // Create a list of data to upload
         val data = hashMapOf(
             getString(R.string.db__userId) to auth.currentUser?.uid,
@@ -395,7 +426,7 @@ class PostPublisherActivity : AppCompatActivity() {
                 lastLocation.longitude
             ).toList(),
             getString(R.string.db__dateExpire) to date,
-            getString(R.string.db__datePosted) to Calendar.getInstance().time,
+            getString(R.string.db__datePosted) to dateFormat.format(Date()).toString(),
             getString(R.string.db__imageUrl) to image.toString(),
             getString(R.string.db__keywords) to title.toLowerCase(Locale.getDefault()).split(" ")
                 .toMutableList()
@@ -405,11 +436,37 @@ class PostPublisherActivity : AppCompatActivity() {
         db.collection(getString(R.string.db_post)).document(UUID.randomUUID().toString())
             .set(data as Map<*, *>)
             .addOnSuccessListener {
+                processDialog.dismissDialog()
                 onBackPressed()
                 Toast.makeText(this, R.string.loading_completed, Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener { exception ->
+                processDialog.dismissDialog()
                 Toast.makeText(this, exception.localizedMessage, Toast.LENGTH_SHORT).show()
             }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        // If it is not connected to the internet it opens an error message
+        registerReceiver(broadcastReceiver, IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
+    }
+
+    /**
+     * If it is not connected to the internet it opens an error message
+     */
+    private var broadcastReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val notConnected =
+                intent.getBooleanExtra(ConnectivityManager.EXTRA_NO_CONNECTIVITY, false)
+            if (notConnected) {
+                val intent = Intent(this@PostPublisherActivity, ErrorActivity::class.java)
+                intent.putExtra("popuptitle", getString(R.string.error))
+                intent.putExtra("popuptext", getString(R.string.must_connected_internet_use_app))
+                intent.putExtra("popupbtn", getString(R.string.ok))
+                intent.putExtra("darkstatusbar", false)
+                startActivity(intent)
+            }
+        }
     }
 }

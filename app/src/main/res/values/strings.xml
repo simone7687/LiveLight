@@ -5,20 +5,37 @@
     <string name="db_categories_name_en" translatable="false">name_en</string>
     <string name="db_post" translatable="false">available_items</string>
     <string name="db_user_details" translatable="false">user_details</string>
+    <string name="db_chats" translatable="false">chats</string>
+    <string name="db_messages" translatable="false">messages</string>
+    <string name="db_lend" translatable="false">lends</string>
+    <string name="db_reviewers" translatable="false">reviewers</string>
+    <string name="db_user_reviews" translatable="false">user_reviews</string>
     <!-- DataBase Field -->
     <string name="db__userId" translatable="false">UserId</string>
+    <string name="db__usersId" translatable="false">UsersId</string>
+    <string name="db__ownerId" translatable="false">OwnerId</string>
+    <string name="db__receiverId" translatable="false">ReceiverId</string>
+    <string name="db__senderId" translatable="false">SenderId</string>
+    <string name="db__postId" translatable="false">ItemId</string>
+    <string name="db__chatId" translatable="false">ChatId</string>
     <string name="db__title" translatable="false">Title</string>
     <string name="db__description" translatable="false">Description</string>
     <string name="db__category" translatable="false">Category</string>
     <string name="db__coordinates" translatable="false">Coordinates</string>
+    <string name="db__dateTime" translatable="false">DateTime</string>
     <string name="db__dateExpire" translatable="false">ExpireDate</string>
     <string name="db__datePosted" translatable="false">PostedOn</string>
+    <string name="db__dateEnd" translatable="false">DateEnd</string>
+    <string name="db__dateStart" translatable="false">DateStart</string>
     <string name="db__imageUrl" translatable="false">ImageUri</string>
     <string name="db__keywords" translatable="false">Keywords</string>
     <string name="db__name" translatable="false">Name</string>
     <string name="db__surname" translatable="false">Surname</string>
     <string name="db__city" translatable="false">City</string>
     <string name="db__address" translatable="false">Address</string>
+    <string name="db__text" translatable="false">Text</string>
+    <string name="db__stars" translatable="false">Stars</string>
+    <string name="db__reviewer" translatable="false">ReviewerId</string>
     <!-- Storage -->
     <string name="storage_folder_post_images" translatable="false">uploaded_images/</string>
     <!-- Warning && Errors -->
@@ -31,6 +48,12 @@
     <string name="image_upload_error">There was an error while loading the image.</string>
     <string name="permission_denied">Permission denied</string>
     <string name="loading_completed">Loading completed</string>
+    <string name="invalid_image">The image you selected is invalid.</string>
+    <string name="error">Error</string>
+    <string name="must_connected_internet_use_app">You must be connected to the internet to use the app.</string>
+    <!-- Loading -->
+    <string name="loading_post">Uploading the post</string>
+    <string name="loading...">Loading…</string>
     <!-- Login & Registration -->
     <string name="login">Login</string>
     <string name="not_registered">Not registered yet?</string>
@@ -54,14 +77,41 @@
     <string-array name="distances">
         <item>@string/any_distance</item>
         <item>10 km</item>
-        <item>20 km</item>
+        <item>30 km</item>
         <item>50 km</item>
+        <item>100 km</item>
     </string-array>
     <!-- Settings -->
     <string name="settings">Settings</string>
     <!-- Post Publisher -->
     <string name="new_post">New Post</string>
     <string name="publish_post_description">Publish a new post</string>
+    <!-- Post Activity -->
+    <string name="description_title">Description:</string>
+    <string name="date_posted_title">Posted on:</string>
+    <string name="distance_title">Distance:</string>
+    <string name="user_title">Posted by:</string>
+    <!-- Dialog -->
+    <string name="delete_post">Delete post</string>
+    <string name="do_you_want_delete_post">Do you want to delete the post?</string>
+    <string name="write_here">Write here</string>
+    <string name="post_deleted">Post deleted</string>
+    <!-- Message -->
+    <string name="send">Send</string>
+    <string name="message">Message</string>
+    <string name="message_sent">Message sent</string>
+    <string name="there_is_already_chat">You have already started a chat for this article, look in Messages.</string>
+    <string name="no_messages">There are no messages. Open a place and start a conversation.</string>
+    <string name="enter_message">Enter message.</string>
+    <!-- Lend -->
+    <string name="start_lend">Start the loan</string>
+    <string name="end_lend">End the loan</string>
+    <string name="lend_article">Lend article</string>
+    <string name="are_sure_lend_your_article">Are you sure you want to lend your article?</string>
+    <!-- Reviews -->
+    <string name="user_rating">User rating</string>
+    <string name="currency">Currency</string>
+    <string name="vote_only_after_use">Then vote only after you have taken advantage of the item.</string>
     <!-- Other -->
     <string name="app_name" translatable="false">Live Light</string>
     <string name="join_description">Let\'s join us\nShare items you don\'t use</string>
@@ -76,7 +126,9 @@
     <string name="take_photo">Take a photo</string>
     <string name="publish">Publish</string>
     <string name="posts_posted">Posts uploaded</string>
-    <string name="uploading_progress">Uploading in progress…</string>
+    <string name="loading_progress">Loading in progress…</string>
     <string name="hi">Hi</string>
     <string name="map">Map</string>
+    <string name="delete">Delete</string>
+    <string name="ok">OK</string>
 </resources>

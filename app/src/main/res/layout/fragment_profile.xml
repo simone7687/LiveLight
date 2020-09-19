@@ -23,7 +23,7 @@
             android:id="@+id/textView_posts_posted"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/uploading_progress"
+            android:text="@string/loading_progress"
             android:textSize="17sp"
             android:layout_marginBottom="@dimen/element_margin" />
 
@@ -33,11 +33,16 @@
             android:layout_height="1dp"
             android:background="?android:attr/listDivider" />
 
-        <ListView
-            android:id="@+id/list_user_post"
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeContainer"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:smoothScrollbar="true" />
-    </LinearLayout>
+            android:layout_height="match_parent">
 
+            <ListView
+                android:id="@+id/list_user_post"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:smoothScrollbar="true" />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    </LinearLayout>
 </RelativeLayout>

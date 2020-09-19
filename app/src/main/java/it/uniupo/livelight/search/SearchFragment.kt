@@ -13,11 +13,13 @@ import android.widget.ListView
 import android.widget.Toast
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.Fragment
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.mancj.materialsearchbar.MaterialSearchBar
 import it.uniupo.livelight.R
+import it.uniupo.livelight.post.PostActivity
 import it.uniupo.livelight.post.PostListAdapter
 import it.uniupo.livelight.post.PostModel
 import kotlinx.android.synthetic.main.fragment_search.view.*
@@ -36,6 +38,7 @@ class SearchFragment : Fragment(), MaterialSearchBar.OnSearchActionListener {
     private var lastLocation: Location? = null
     private lateinit var list: ListView
     private var search_text: String? = null
+    private var swipeContainer: SwipeRefreshLayout? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -63,6 +66,27 @@ class SearchFragment : Fragment(), MaterialSearchBar.OnSearchActionListener {
         root.searchBar.setOnSearchActionListener(this)
 
         updatePostList(root.findViewById(R.id.list_post), distanceSelected, lastLocation)
+
+        // Lookup the swipe container view
+        swipeContainer = root.findViewById(R.id.swipeContainer) as SwipeRefreshLayout
+        // Setup refresh listener which triggers new data loading
+        swipeContainer!!.setOnRefreshListener {
+            // Make sure you call swipeContainer.setRefreshing(false)
+            // once the network request has completed successfully.
+            updatePostList(
+                list,
+                distanceSelected,
+                lastLocation,
+                search_text
+            )
+        }
+        // Configure the refreshing colors
+        swipeContainer!!.setColorSchemeResources(
+            android.R.color.holo_blue_bright,
+            android.R.color.holo_green_light,
+            android.R.color.holo_orange_light,
+            android.R.color.holo_red_light
+        )
 
         return root
     }
@@ -100,6 +124,12 @@ class SearchFragment : Fragment(), MaterialSearchBar.OnSearchActionListener {
                 // Got last known location
                 if (location != null) {
                     lastLocation = location
+                    updatePostList(
+                        list,
+                        distanceSelected,
+                        lastLocation,
+                        search_text
+                    )
                 } else if (distanceSelected != 0)
                     Toast.makeText(
                         activity?.baseContext, R.string.no_location,
@@ -107,14 +137,6 @@ class SearchFragment : Fragment(), MaterialSearchBar.OnSearchActionListener {
                     ).show()
             }
         }
-        // Update the list
-        if (lastLocation != null)
-            updatePostList(
-                list,
-                distanceSelected,
-                lastLocation,
-                search_text
-            )
     }
 
     /**
@@ -144,6 +166,7 @@ class SearchFragment : Fragment(), MaterialSearchBar.OnSearchActionListener {
                     )
                 }
             }.addOnFailureListener { exception ->
+                swipeContainer?.isRefreshing = false
                 Toast.makeText(
                     activity?.baseContext, exception.localizedMessage,
                     Toast.LENGTH_SHORT
@@ -180,6 +203,7 @@ class SearchFragment : Fragment(), MaterialSearchBar.OnSearchActionListener {
                     )
                 }
             }.addOnFailureListener { exception ->
+                swipeContainer?.isRefreshing = false
                 Toast.makeText(
                     activity?.baseContext, exception.localizedMessage,
                     Toast.LENGTH_SHORT
@@ -197,15 +221,14 @@ class SearchFragment : Fragment(), MaterialSearchBar.OnSearchActionListener {
         lastLocation: Location?
     ) {
         // for PostListAdapter
-        val titlePost: ArrayList<String> = ArrayList()
-        val descriptionPost: ArrayList<String> = ArrayList()
-        val imagePost: ArrayList<String> = ArrayList()
+        val posts: ArrayList<PostModel> = ArrayList()
 
         loop@ for (item in result!!.documents) {
             val model = PostModel(item.id)
             model.user = item.get(getString(R.string.db__userId)) as String
             model.title = item.get(getString(R.string.db__title)) as String
             model.description = item.get(getString(R.string.db__description)) as String
+            model.datePosted = item.get(getString(R.string.db__datePosted)) as String
             model.image = item.get(getString(R.string.db__imageUrl)) as String
             model.coordinates =
                 item.get(getString(R.string.db__coordinates)) as ArrayList<Double>
@@ -217,37 +240,51 @@ class SearchFragment : Fragment(), MaterialSearchBar.OnSearchActionListener {
                 itemLoc.longitude = model.coordinates[1]
 
                 when (distanceSelected) {
-                    //10km
+                    // 10km
                     1 -> {
                         if (lastLocation.distanceTo(itemLoc) > 10000)
                             continue@loop
                     }
-                    //20km
+                    // 30km
                     2 -> {
-                        if (lastLocation.distanceTo(itemLoc) > 20000)
+                        if (lastLocation.distanceTo(itemLoc) > 30000)
                             continue@loop
                     }
-                    //50km
+                    // 50km
                     3 -> {
                         if (lastLocation.distanceTo(itemLoc) > 50000)
+                            continue@loop
+                    }
+                    // 100km
+                    3 -> {
+                        if (lastLocation.distanceTo(itemLoc) > 100000)
                             continue@loop
                     }
                 }
             }
 
             // for PostListAdapter
-            titlePost.add(model.title)
-            descriptionPost.add(model.description)
-            imagePost.add(model.image)
+            posts.add(model)
         }
 
         // Update the list of posts
-        postList.adapter =
-            PostListAdapter(
-                this.requireActivity(),
-                titlePost,
-                descriptionPost,
-                imagePost
-            )
+        val postsAdapter = PostListAdapter(this.requireActivity(), posts)
+        postList.adapter = postsAdapter
+        postList.setOnItemClickListener { parent, view, position, id ->
+            postsAdapter.getItem(position)?.let { viewPost(it) }
+        }
+        swipeContainer?.isRefreshing = false
+    }
+
+    fun viewPost(post: PostModel) {
+        val aa = PostActivity()
+        val intent = Intent(activity, aa::class.java)
+        intent.putExtra("post_id", post.id)
+        intent.putExtra("post_user", post.user)
+        intent.putExtra("post_title", post.title)
+        intent.putExtra("post_description", post.description)
+        intent.putExtra("post_datePosted", post.datePosted)
+        intent.putExtra("post_image", post.image)
+        startActivity(intent)
     }
 }

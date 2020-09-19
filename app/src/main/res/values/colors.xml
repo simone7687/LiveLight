@@ -5,4 +5,6 @@
     <color name="colorAccent">#D81B60</color>
     <color name="colorWhite">#FFFFFF</color>
     <color name="colorRedError">#FA0033</color>
+    <color name="messageBackground">#4300C5FF</color>
+    <color name="messageText">#000000</color>
 </resources>

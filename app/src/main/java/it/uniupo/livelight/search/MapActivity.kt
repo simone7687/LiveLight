@@ -108,7 +108,8 @@ class MapActivity : AppCompatActivity() {
                     val model = PostModel(item.id)
                     model.title = item.get(getString(R.string.db__title)) as String
                     model.description = item.get(getString(R.string.db__description)) as String
-                    model.coordinates = item.get(getString(R.string.db__coordinates)) as ArrayList<Double>
+                    model.coordinates =
+                        item.get(getString(R.string.db__coordinates)) as ArrayList<Double>
 
                     // Add posts to the map
                     val itemLocation = LatLng(model.coordinates[0], model.coordinates[1])
