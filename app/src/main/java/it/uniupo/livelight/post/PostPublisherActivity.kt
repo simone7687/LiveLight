@@ -19,11 +19,13 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider.getUriForFile
+import androidx.fragment.app.FragmentManager
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
 import it.uniupo.livelight.R
+import it.uniupo.livelight.dialog.ProcessFragment
 import kotlinx.android.synthetic.main.activity_post_publisher.*
 import java.io.File
 import java.text.SimpleDateFormat
@@ -42,8 +44,10 @@ class PostPublisherActivity : AppCompatActivity() {
     private val REQUEST_CODE_CAMERA = 200
     private val REQUEST_CODE_LOCATION = 300
 
-    private lateinit var image: Uri
+    private var image: Uri? = null
     private var categorySelected: Int = 0
+
+    private val processDialog = ProcessFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,6 +101,13 @@ class PostPublisherActivity : AppCompatActivity() {
         }
 
         button_publish.setOnClickListener {
+            val fm: FragmentManager = supportFragmentManager
+            val b = Bundle()
+            b.putInt("text_progress", R.string.loading_post) // TODO:
+            processDialog.arguments = b
+            processDialog.isCancelable = false
+            processDialog.show(fm, "fragment_process")
+
             publishPostWhichFields()
         }
 
@@ -268,7 +279,7 @@ class PostPublisherActivity : AppCompatActivity() {
      * Returns false if it finds an empty field and sends a message
      */
     private fun checkEmptyFields(): Boolean {
-        if (editText_title.text.isNullOrEmpty() || textView_description.text.isNullOrEmpty() || editTextDate.text.isNullOrEmpty() || image.toString()
+        if (editText_title.text.isNullOrEmpty() || textView_description.text.isNullOrEmpty() || editTextDate.text.isNullOrEmpty() || image == null || image.toString()
                 .isEmpty() || categorySelected == 0
         ) {
             Toast.makeText(
@@ -285,8 +296,6 @@ class PostPublisherActivity : AppCompatActivity() {
      * Aggregate loading status with a Loading Activity
      */
     private fun publishPostWhichFields() {
-        // TODO: update Loading Activity: Loading in progress
-
         if (checkEmptyFields()) {
             // Requests location permission
             if (ContextCompat.checkSelfPermission(
@@ -301,7 +310,7 @@ class PostPublisherActivity : AppCompatActivity() {
             val fusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
             fusedLocationClient!!.lastLocation
                 .addOnCompleteListener(this) { task ->
-                    if (task.isSuccessful && task.result != null) {
+                    if (task.isSuccessful && task.result != null && image != null) {
                         // Publication through local image
                         publishPostWhichLocalImage(
                             editText_title.text.toString(),
@@ -309,13 +318,15 @@ class PostPublisherActivity : AppCompatActivity() {
                             editTextDate.text.toString(),
                             categorySelected,
                             task.result!!,
-                            image
+                            image!!
                         )
                     } else {
-                        // TODO: close Loading Activity
+                        processDialog.dismissDialog()
                         Toast.makeText(this, R.string.no_location, Toast.LENGTH_SHORT).show()
                     }
                 }
+        } else {
+            processDialog.dismissDialog()
         }
     }
 
@@ -331,8 +342,6 @@ class PostPublisherActivity : AppCompatActivity() {
         lastLocation: Location,
         imagePath: Uri
     ) {
-        // TODO: update Loading Activity: Upload Image
-
         // Generate the name file: "use id"_"random ID"
         val path =
             storage.reference.child(getString(R.string.storage_folder_post_images) + auth.currentUser!!.uid + "_" + UUID.randomUUID())
@@ -362,6 +371,7 @@ class PostPublisherActivity : AppCompatActivity() {
                     )
                 }
             } else {
+                processDialog.dismissDialog()
                 Toast.makeText(
                     this,
                     getString(R.string.image_upload_error),
@@ -384,14 +394,14 @@ class PostPublisherActivity : AppCompatActivity() {
         lastLocation: Location,
         image: Uri
     ) {
-        // TODO: start Loading Activity: Loading in progress
-
         // Check the parameters 
         if (image.toString().isEmpty()) {
+            processDialog.dismissDialog()
             Toast.makeText(this, R.string.image_upload_error, Toast.LENGTH_SHORT).show()
             return
         }
         if (title.isEmpty() || description.isEmpty() || editTextDate.text.isNullOrEmpty() || categorySelected == 0) {
+            processDialog.dismissDialog()
             Toast.makeText(
                 baseContext, getString(R.string.empty_input_field),
                 Toast.LENGTH_SHORT
@@ -421,10 +431,12 @@ class PostPublisherActivity : AppCompatActivity() {
         db.collection(getString(R.string.db_post)).document(UUID.randomUUID().toString())
             .set(data as Map<*, *>)
             .addOnSuccessListener {
+                processDialog.dismissDialog()
                 onBackPressed()
                 Toast.makeText(this, R.string.loading_completed, Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener { exception ->
+                processDialog.dismissDialog()
                 Toast.makeText(this, exception.localizedMessage, Toast.LENGTH_SHORT).show()
             }
     }

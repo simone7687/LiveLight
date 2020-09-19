@@ -49,6 +49,9 @@
     <string name="permission_denied">Permission denied</string>
     <string name="loading_completed">Loading completed</string>
     <string name="invalid_image">The image you selected is invalid.</string>
+    <!-- Loading -->
+    <string name="loading_post">Uploading the post</string>
+    <string name="loading...">Loading…</string>
     <!-- Login & Registration -->
     <string name="login">Login</string>
     <string name="not_registered">Not registered yet?</string>

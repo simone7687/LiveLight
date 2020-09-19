@@ -13,6 +13,9 @@
     <string name="permission_denied">Permesso negato</string>
     <string name="loading_completed">Caricamento Completato</string>
     <string name="invalid_image">L\'immagine selezionata non è valida.</string>
+    <!-- Loading -->
+    <string name="loading_post">Caricamento del post</string>
+    <string name="loading...">Caricamento…</string>
     <!-- Login & Registration -->
     <string name="login">Accedi</string>
     <string name="not_registered">Non sei ancora registrato?</string>
