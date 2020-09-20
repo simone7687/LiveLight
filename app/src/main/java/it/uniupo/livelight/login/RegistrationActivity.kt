@@ -6,10 +6,12 @@ import android.text.TextUtils
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentManager
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import it.uniupo.livelight.MainActivity
 import it.uniupo.livelight.R
+import it.uniupo.livelight.dialog.ProcessFragment
 import kotlinx.android.synthetic.main.activity_registration.*
 import java.util.regex.Pattern
 
@@ -17,9 +19,9 @@ import java.util.regex.Pattern
  * Activity to register
  */
 class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
-
     private lateinit var auth: FirebaseAuth
     private lateinit var db: FirebaseFirestore
+    private val processDialog = ProcessFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +42,12 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     override fun onClick(v: View) {
         when (v.id) {
             R.id.button_registration -> {
+                val fm: FragmentManager = supportFragmentManager
+                val b = Bundle()
+                processDialog.arguments = b
+                processDialog.isCancelable = false
+                processDialog.show(fm, "fragment_process")
+
                 // check for empty fields
                 if (!checkEmptyFields()) {
                     Toast.makeText(
@@ -47,14 +55,16 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                         R.string.empty_input_field,
                         Toast.LENGTH_SHORT
                     ).show()
+                    processDialog.dismissDialog()
                     return
                 }
                 // check if it is a robust password
                 if (!checkPasswordCharacters(editText_password.text.toString())) {
                     Toast.makeText(
-                        baseContext, R.string.weak_password,
+                        baseContext, R.string.password_requirements,
                         Toast.LENGTH_SHORT
                     ).show()
+                    processDialog.dismissDialog()
                     return
                 }
                 // check if the password is the same as the verification password
@@ -65,6 +75,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                         R.string.different_passwords,
                         Toast.LENGTH_SHORT
                     ).show()
+                    processDialog.dismissDialog()
                     return
                 }
                 // check whether the data processing has been authorized
@@ -74,6 +85,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                         R.string.unauthorized_data_processing,
                         Toast.LENGTH_SHORT
                     ).show()
+                    processDialog.dismissDialog()
                     return
                 }
 
@@ -86,6 +98,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                         baseContext, R.string.invalid_email,
                         Toast.LENGTH_SHORT
                     ).show()
+                    processDialog.dismissDialog()
                     return
                 }
 
@@ -185,17 +198,20 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                         val intentMain = Intent(this, MainActivity::class.java)
                         startActivity(intentMain)
                         finish()
+                        processDialog.dismissDialog()
                     }.addOnFailureListener { exception ->
                         Toast.makeText(this, exception.localizedMessage, Toast.LENGTH_SHORT).show()
                         // if not, delete the user who has just been created
                         val user = auth.currentUser!!
                         user.delete()
+                        processDialog.dismissDialog()
                     }
             }.addOnFailureListener { exception ->
                 Toast.makeText(
                     baseContext, exception.localizedMessage,
                     Toast.LENGTH_SHORT
                 ).show()
+                processDialog.dismissDialog()
             }
     }
 }
