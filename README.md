@@ -10,7 +10,7 @@ buttando quelli “vecchi” pur essendo ancora funzionali, oppure altri di cui 
 
 ## Login e registrazione
 
-Quando viene aperta l'app per la prima volta o quando non si è loggati, l'applicazione, dopo una verifica di login nel [**Main**](link), ci porta alla schermata di **Login**.
+Quando viene aperta l'app per la prima volta o quando non si è loggati, l'applicazione, dopo una verifica di login nel [**Main**](https://github.com/simone7687/LiveLight/blob/development/README.md#main), ci porta alla schermata di **Login**.
 
 **Nel caso in cui si è registrati**, basterà loggarsi con le credenziali.
 
@@ -30,37 +30,37 @@ Quando viene aperta l'app per la prima volta o quando non si è loggati, l'appli
 
 ## Main
 
-Dopo il **login** o **all'apertura dell'app** verrà mostrata la pagina principale, detta [**Main**](link), che mostrerà il "Fragment" di profilo.
+Dopo il **login** o **all'apertura dell'app** verrà mostrata la pagina principale, detta [**Main**](https://github.com/simone7687/LiveLight/blob/development/README.md#main), che mostrerà il "Fragment" di profilo.
 
 Il Main è l'Activity principale dell'applicazione che è composta da:
 
-- un **Bottone circolare (Floating Action Button)** che permette di accedere alla scheda di [pubblicazione di un Post](link)
+- un **Bottone circolare (Floating Action Button)** che permette di accedere alla scheda di [pubblicazione di un Post](https://github.com/simone7687/LiveLight/blob/development/README.md#postare-un-articolo)
 - la barra superiore (Tool Bar) che permette di accedere alle **Impostazioni** o di effettuare il **Logout**
-- la barra inferiore composta da tre icone/pulsanti che permettono di accedere alle schermate (Fragment) di [**Profilo**](link), [**Ricerca**](link) e [**Messaggi**](link)
+- la barra inferiore composta da tre icone/pulsanti che permettono di accedere alle schermate (Fragment) di [**Profilo**](https://github.com/simone7687/LiveLight/blob/development/README.md#profilo), [**Ricerca**](https://github.com/simone7687/LiveLight/blob/development/README.md#ricerca) e [**Messaggi**](https://github.com/simone7687/LiveLight/blob/development/README.md#messaggi)
 
 ### Postare un articolo
 
-Dopo aver premuto il **Bottone circolare (FAB)** del [**Main**](link) si aprirà una scheda per **postare un articolo**.
+Dopo aver premuto il **Bottone circolare (FAB)** del [**Main**](https://github.com/simone7687/LiveLight/blob/development/README.md#main) si aprirà una scheda per **postare un articolo**.
 
 I requisiti per postare un articolo sono:
-- Titolo (dal titolo verranno creati le keywords per la [ricerca](link))
+- Titolo (dal titolo verranno creati le keywords per la [ricerca](https://github.com/simone7687/LiveLight/blob/development/README.md#ricerca))
 - Descrizione
 - Data del termine di disponibilità
-- Categoria (i valori della categoria vengono recuperati dal [Data Base](link) in base alla lingua del sistema)
+- Categoria (i valori della categoria vengono recuperati dal [Data Base](https://firebase.google.com/docs) in base alla lingua del sistema)
 - Immagine
 - **Localizzazione GPS** attiva
 
-Dopo aver premuto il tasto "Pubblica" dell'applicazione si avvierà il caricamento del post con opportuno dialogo(link).
+Dopo aver premuto il tasto "Pubblica" dell'applicazione si avvierà il caricamento del post con opportuno dialogo.
 
 ## Profilo
 
-Il **Profilo** è il Fragment iniziale del [**Main**](link). Qui si può visualizzare il nome dell'utente, il numero dei post pubblicati e [visualizzare i post](link) pubblicati dall'utente(link)
+Il **Profilo** è il Fragment iniziale del [**Main**](https://github.com/simone7687/LiveLight/blob/development/README.md#main). Qui si può visualizzare il nome dell'utente, il numero dei post pubblicati e [visualizzare i post](https://github.com/simone7687/LiveLight/blob/development/README.md#visualizzare-un-articolo) pubblicati dall'utente
 
 ## Ricerca
 
 Il **Cerca** è la schermata di ricerca degli articoli. Di default viene visualizzata la lista di tutti i post. 
 
-Con la barra di ricerca e “la tendina” delle distanze (ottenendo l'ultima posizione del dispositivo) si può effettuare una ricerca in base alla distanza. La ricerca testuale avviene attraverso le keywords create nella fase di [pubblicazione del post](link).
+Con la barra di ricerca e “la tendina” delle distanze (ottenendo l'ultima posizione del dispositivo) si può effettuare una ricerca in base alla distanza. La ricerca testuale avviene attraverso le keywords create nella fase di [pubblicazione del post](https://github.com/simone7687/LiveLight/blob/development/README.md#postare-un-articolo).
 
 ### Mappa
 
@@ -72,21 +72,21 @@ Cliccando un post nella lista del Fargment del Profilo o nel Fragment della Rice
 
 ## Messaggi 
 
-Il Fragment Messaggi è una schermata in cui si trova la lista delle [**Chat**](link) già iniziate (si può inviare il primo messaggio dall’Activity utilizzata per [visualizzare un post](link))
+Il Fragment Messaggi è una schermata in cui si trova la lista delle [**Chat**](https://github.com/simone7687/LiveLight/blob/development/README.md#chat) già iniziate (si può inviare il primo messaggio dall’Activity utilizzata per [visualizzare un post](https://github.com/simone7687/LiveLight/blob/development/README.md#visualizzare-un-articolo))
 
 ### Chat
 
 La Chat è una Activity composta da una lista di messaggi. Qui il proprietario e il cliente possono comunicare per raggiungere un accordo.
 
-Nella Chat inoltre si può [recensire l’utente](link) e segnalare al sito il [prestito dall’articolo](link).
+Nella Chat inoltre si può [recensire l’utente](https://github.com/simone7687/LiveLight/blob/development/README.md#recensire-un-utente) e segnalare al sito il [prestito dall’articolo](https://github.com/simone7687/LiveLight/blob/development/README.md#approvare-il-prestito).
 
 #### Approvare il prestito
 
-Se sei il proprietario del prodotto nella [**Chat**](link) si può prestare l’articolo cliccando il bottone inizia il prestito. Alla fine del prestito basterà cliccare il Bottone termina prestito per segnalare che il prestito è terminato.
+Se sei il proprietario del prodotto nella [**Chat**](https://github.com/simone7687/LiveLight/blob/development/README.md#chat) si può prestare l’articolo cliccando il bottone inizia il prestito. Alla fine del prestito basterà cliccare il Bottone termina prestito per segnalare che il prestito è terminato.
 
 #### Recensire un utente
 
-Dopo il termine di un [prestito](link) si può votare il proprietario dell’articolo o chi ne ha usufruito cliccando la “stella” nella barra in alto a destra.
+Dopo il termine di un [prestito](https://github.com/simone7687/LiveLight/blob/development/README.md#approvare-il-prestito) si può votare il proprietario dell’articolo o chi ne ha usufruito cliccando la “stella” nella barra in alto a destra.
 
 ### Consegna Progetto ANDROID
 Si tratta di realizzare una app per la condivisione di oggetti inutilizzati, le motivazioni alla base sono spiegati in calce. 
