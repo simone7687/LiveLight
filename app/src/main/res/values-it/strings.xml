@@ -29,6 +29,7 @@
     <string name="surname">Cognome</string>
     <string name="verify_password">Conferma Password</string>
     <string name="authorizes_data">Autorizzo al trattamento dei miei dati.</string>
+    <string name="password_requirements">Password deve avere 6 caratteri e deve essere composta anche da almeno una lettera maiuscola, un numero e un carattere speciale.</string>
     <!-- Main -->
     <string name="title_activity_main">MainActivity</string>
     <string name="search">Cerca</string>

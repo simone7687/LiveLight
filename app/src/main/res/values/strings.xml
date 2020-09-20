@@ -66,6 +66,7 @@
     <string name="verify_password">Confirm Password</string>
     <string name="authorizes_data">I authorize the treatment of my data.</string>
     <string name="logout" translatable="false">Log out</string>
+    <string name="password_requirements">Password must have 6 characters and must also consist of at least one capital letter, one number and one special character.</string>
     <!-- Main -->
     <string name="title_activity_main">MainActivity</string>
     <string name="search">Search</string>
