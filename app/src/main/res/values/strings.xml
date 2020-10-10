@@ -92,6 +92,7 @@
     <string name="date_posted_title">Posted on:</string>
     <string name="distance_title">Distance:</string>
     <string name="user_title">Posted by:</string>
+    <string name="user_rating_title">User rating:</string>
     <!-- Dialog -->
     <string name="delete_post">Delete post</string>
     <string name="do_you_want_delete_post">Do you want to delete the post?</string>
