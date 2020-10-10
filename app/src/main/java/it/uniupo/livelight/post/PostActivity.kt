@@ -3,6 +3,7 @@ package it.uniupo.livelight.post
 import android.annotation.SuppressLint
 import android.location.Location
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.FragmentManager
@@ -10,6 +11,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentChange
 import com.google.firebase.firestore.FirebaseFirestore
 import it.uniupo.livelight.R
 import it.uniupo.livelight.dialog.ApproveFragment
@@ -95,6 +97,7 @@ class PostActivity : AppCompatActivity(), ApproveFragment.ApproveDialogListener,
 
         setDistaceView(post.id)
         setUserDataView(post.user)
+        setUserRatingView(post.user)
 
         // Back button
         val actionBar = supportActionBar
@@ -141,6 +144,32 @@ class PostActivity : AppCompatActivity(), ApproveFragment.ApproveDialogListener,
                     Toast.LENGTH_SHORT
                 ).show()
             }
+    }
+
+    /**
+     * Insert rating of the user in the View
+     */
+    private fun setUserRatingView(user: String) {
+        val collection = db.collection(getString(R.string.db_user_reviews)).document(user)
+            .collection(getString(R.string.db_reviewers))
+        collection.addSnapshotListener { snapshots, e ->
+            val stars = arrayListOf<Float>()
+            if (snapshots != null && e == null) {
+                for (dc in snapshots.documentChanges) {
+                    when (dc.type) {
+                        DocumentChange.Type.ADDED -> {
+                            val v = dc.document.get(getString(R.string.db__stars)) as Number
+                            stars.add(v.toFloat())
+                        }
+                    }
+                }
+            }
+            if (stars.size > 0) {
+                textView_ratingTitle.visibility = View.VISIBLE
+                ratingBar_rating.visibility = View.VISIBLE
+                ratingBar_rating.rating = stars.average().toFloat()
+            }
+        }
     }
 
     /**

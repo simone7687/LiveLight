@@ -48,6 +48,7 @@
     <string name="date_posted_title">Postato il:</string>
     <string name="distance_title">Dista:</string>
     <string name="user_title">Postato da:</string>
+    <string name="user_rating_title">Valutazione utente:</string>
     <!-- Dialog -->
     <string name="delete_post">Elimina post</string>
     <string name="do_you_want_delete_post">Sei sicuro di eliminare il post?</string>
